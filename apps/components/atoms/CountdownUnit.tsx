@@ -18,10 +18,10 @@ export function CountdownUnit({
 
   return (
     <div className={`flex flex-col items-center gap-1 ${className}`.trim()}>
-      <span className="font-serif text-4xl md:text-5xl font-bold text-[var(--color-warm-gray)]">
+      <span className="font-serif text-[2.5rem] sm:text-4xl md:text-5xl font-bold text-[var(--color-warm-gray)] leading-none">
         {displayValue}
       </span>
-      <span className="font-sans text-xs tracking-widest uppercase text-[var(--color-warm-gray)]">
+      <span className="font-sans text-[10px] sm:text-xs tracking-widest uppercase text-[var(--color-warm-gray)]">
         {label}
       </span>
     </div>

@@ -19,13 +19,13 @@ export function WeddingGiftSection() {
         <Image src="/assets/core-background.jpg" alt="" fill className="object-cover" sizes="480px" aria-hidden="true" />
       </div>
 
-      <div ref={ref} className="relative z-10 flex flex-col items-center justify-center w-full flex-1 px-4 py-10">
-        <div className={`anim-scale-in ${vis} w-full max-w-md border-2 border-[var(--color-warm-gray)]/30 rounded-2xl px-6 py-10 bg-white/55 backdrop-blur-sm shadow-sm`}>
+      <div ref={ref} className="relative z-10 flex flex-col items-center justify-center w-full flex-1 px-6!">
+        <div className={`anim-scale-in ${vis} w-full max-w-md border-2 border-[var(--color-warm-gray)]/30 rounded-2xl px-6! py-10! space-y-6! backdrop-blur-sm shadow-sm`}>
           <h2 className={`anim-fade-up ${vis} font-serif font-semibold text-[var(--color-olive)] tracking-[0.2em] uppercase text-2xl text-center mb-6`}>
             Wedding Gift
           </h2>
 
-          <p className={`anim-fade-up ${vis} anim-delay-100 font-serif italic text-[var(--color-warm-gray)] text-sm text-center leading-relaxed mb-10`}>
+          <p className={`anim-fade-up ${vis} anim-delay-100 font-serif font-semibold text-[var(--color-warm-gray)] text-sm text-center leading-relaxed mb-10`}>
             Your presence at our wedding is the greatest gift of all. However, if you wish to bless us with a token of love, you may find our details below.
           </p>
 
@@ -33,7 +33,7 @@ export function WeddingGiftSection() {
             <div key={account.bankName}>
               <BankCard account={account} isVisible={isVisible} delay={(i + 1) * 200} />
               {i < bankAccounts.length - 1 && (
-                <div className="flex justify-center my-6">
+                <div className="flex justify-center my-6!">
                   <div className="w-3/4 h-px bg-[var(--color-warm-gray)]/20" />
                 </div>
               )}
@@ -69,8 +69,8 @@ function BankCard({
       className={`anim-fade-up ${isVisible ? "is-visible" : ""} flex flex-col items-center text-center py-6 gap-3`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      <div className="relative w-[180px] h-[70px]">
-        <Image src={account.bankLogoSrc} alt={`Logo ${account.bankName}`} fill className="object-contain" sizes="180px" />
+      <div className="relative w-[140px] h-[90px] sm:w-[160px] sm:h-[100px]">
+        <Image src={account.bankLogoSrc} alt={`Logo ${account.bankName}`} fill className="object-contain" sizes="(max-width: 400px) 140px, 160px" />
       </div>
       <p className="font-serif font-bold text-[var(--color-olive)] tracking-widest text-2xl">{account.accountNumber}</p>
       <p className="font-sans text-[var(--color-warm-gray)] text-sm">A/N {account.accountHolder}</p>

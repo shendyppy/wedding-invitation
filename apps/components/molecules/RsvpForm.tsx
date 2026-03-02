@@ -81,7 +81,12 @@ export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
         }
       />
 
-      <Button type="submit" variant="primary" size="lg" className="w-full mt-1">
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        className="w-full mt-1 bg-[var(--color-cream)]/50! text-white! h-9! text-sm sm:text-base"
+      >
         Confirm
       </Button>
     </form>

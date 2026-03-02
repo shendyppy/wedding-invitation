@@ -10,29 +10,51 @@ export function ThankYouSection() {
   return (
     <section
       id="thank-you"
-      className="invitation-section bg-[var(--color-cream)] overflow-hidden flex flex-col"
+      className="invitation-section relative overflow-hidden flex flex-col items-center justify-center px-6! py-10!"
     >
-      <div className="relative w-full flex-shrink-0 h-[65vh] min-h-[300px]">
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/thank-you-image.jpeg"
-          alt="Stevana & Zulfikar"
+          src="/assets/core-background.jpg"
+          alt=""
           fill
-          className="object-cover object-top"
-          quality={95}
+          className="object-cover"
           sizes="480px"
+          aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--color-cream)]" />
       </div>
 
-      <div ref={ref} className="flex flex-col items-center justify-center text-center px-4 py-8 flex-1">
-        <h2 className={`anim-fade-up ${vis} font-serif font-semibold tracking-[0.2em] uppercase text-[var(--color-warm-gray)] text-3xl mb-4`}>
-          Thank You
-        </h2>
-        <p className={`anim-fade-up ${vis} anim-delay-200 font-serif italic text-[var(--color-warm-gray)] text-sm leading-7 max-w-sm`}>
-          As we begin this new chapter together, we are truly grateful for your love, support, and heartfelt wishes.
-        </p>
-        <div className={`anim-fade-in ${vis} anim-delay-400 mt-8`}>
-          <div className="w-24 h-px bg-[var(--color-warm-gray)]/30" />
+      <div
+        ref={ref}
+        className="relative z-10 w-full max-w-sm flex flex-col items-center gap-7"
+      >
+        {/* Photo — sharp corners */}
+        <div
+          className={`anim-scale-in ${vis} relative w-full overflow-hidden shadow-md`}
+          style={{ aspectRatio: "3/4" }}
+        >
+          <Image
+            src="/assets/thank-you-image.jpeg"
+            alt="Stevana & Zulfikar"
+            fill
+            className="object-cover object-center"
+            quality={95}
+            sizes="380px"
+          />
+        </div>
+
+        {/* Text */}
+        <div
+          className={`anim-fade-up ${vis} anim-delay-200 text-center flex flex-col items-center gap-4`}
+        >
+          <h2 className="font-serif font-bold tracking-[0.25em] uppercase text-[var(--color-dark-olive)] text-3xl">
+            Thank You
+          </h2>
+          <p className="font-serif italic text-[var(--color-warm-gray)] text-sm leading-7 max-w-[280px]">
+            As we begin this new chapter together, we are truly grateful for
+            your love, support, and heartfelt wishes.
+          </p>
+          <div className="w-48 h-px bg-[var(--color-warm-gray)]/30 mt-2" />
         </div>
       </div>
     </section>

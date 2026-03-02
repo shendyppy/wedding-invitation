@@ -1,6 +1,6 @@
 // ============================================================
 // Input — Atom
-// Styled text input with beige/cream background.
+// Styled text input with soft rounded border.
 // ============================================================
 
 import type { InputHTMLAttributes } from "react";
@@ -21,7 +21,7 @@ export function Input({ label, className = "", id, ...props }: InputProps) {
       )}
       <input
         id={inputId}
-        className={`w-full px-4 py-3 bg-[var(--color-soft-beige)] text-[var(--color-dark-olive)] placeholder:text-[var(--color-warm-gray)] border border-transparent rounded-[var(--radius-sm)] font-sans text-sm outline-none focus:border-[var(--color-olive)] transition-colors duration-300 ${className}`.trim()}
+        className={`w-full px-5! py-3.5! bg-[var(--color-soft-beige)]! text-[var(--color-dark-olive)] placeholder:text-[var(--color-warm-gray)] border border-[var(--color-warm-gray)]/20 rounded-xl! font-sans text-sm outline-none focus:border-[var(--color-olive)] transition-all duration-300 ${className}`.trim()}
         {...props}
       />
     </div>
