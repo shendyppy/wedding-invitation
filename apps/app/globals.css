@@ -1,26 +1,364 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design Tokens — Wedding Invitation Theme
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Colors ────────────────────────────────────────────── */
+  --color-beige: #ede6db;
+  --color-soft-beige: #f5efe6;
+  --color-olive: #5c6b4f;
+  --color-dark-olive: #4b4f3f;
+  --color-warm-gray: #8a8478;
+  --color-white: #ffffff;
+  --color-black: #1a1a1a;
+  --color-cream: #faf8f5;
+
+  /* ── Typography (Google Fonts loaded via next/font) ───── */
+  --font-script: var(--font-great-vibes), cursive;
+  --font-serif: var(--font-cormorant), "Georgia", serif;
+  --font-sans: var(--font-source-sans), "Inter", sans-serif;
+
+  /* ── Spacing Scale ─────────────────────────────────────── */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* ── Borders ───────────────────────────────────────────── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+
+  /* ── Transitions ───────────────────────────────────────── */
+  --transition-fast: 150ms ease;
+  --transition-base: 300ms ease;
+  --transition-slow: 500ms ease;
+
+  /* ── Semantic ──────────────────────────────────────────── */
+  --background: var(--color-beige);
+  --foreground: var(--color-dark-olive);
+  --background-alt: var(--color-dark-olive);
+  --foreground-alt: var(--color-white);
+  --accent: var(--color-olive);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-beige: var(--color-beige);
+  --color-soft-beige: var(--color-soft-beige);
+  --color-olive: var(--color-olive);
+  --color-dark-olive: var(--color-dark-olive);
+  --color-warm-gray: var(--color-warm-gray);
+  --color-cream: var(--color-cream);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-script: var(--font-script);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   Base Styles
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-serif);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ============================================================
+   Utility Classes
+   ============================================================ */
+
+.invitation-container {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.invitation-section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+}
+
+.section-padding {
+  padding: var(--space-3xl) var(--space-xl);
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Shared button styles */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.btn-base:active {
+  transform: scale(0.97);
+}
+
+.btn-olive {
+  background: var(--color-olive);
+  color: var(--color-white);
+}
+
+.btn-olive:hover {
+  background: var(--color-dark-olive);
+}
+
+/* ============================================================
+   Scroll Animation — Base States
+   ============================================================ */
+
+.anim-fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.anim-fade-in {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.anim-scale-in {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.anim-slide-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.anim-slide-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+/* Visible state */
+.is-visible .anim-fade-up,
+.anim-fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.is-visible .anim-fade-in,
+.anim-fade-in.is-visible {
+  opacity: 1;
+}
+
+.is-visible .anim-scale-in,
+.anim-scale-in.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.is-visible .anim-slide-left,
+.anim-slide-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.is-visible .anim-slide-right,
+.anim-slide-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Stagger delays */
+.anim-delay-100 {
+  transition-delay: 100ms !important;
+}
+.anim-delay-200 {
+  transition-delay: 200ms !important;
+}
+.anim-delay-300 {
+  transition-delay: 300ms !important;
+}
+.anim-delay-400 {
+  transition-delay: 400ms !important;
+}
+.anim-delay-500 {
+  transition-delay: 500ms !important;
+}
+.anim-delay-600 {
+  transition-delay: 600ms !important;
+}
+.anim-delay-700 {
+  transition-delay: 700ms !important;
+}
+.anim-delay-800 {
+  transition-delay: 800ms !important;
+}
+
+/* ============================================================
+   Keyframe Animations
+   ============================================================ */
+
+@keyframes spin-record {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.music-btn-spin {
+  animation: spin-record 4s linear infinite;
+}
+
+.music-btn-paused {
+  animation-play-state: paused;
+}
+
+@keyframes float-pulse {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 20px rgba(92, 107, 79, 0.4);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 8px 30px rgba(92, 107, 79, 0.55);
+  }
+}
+
+.music-btn-float {
+  animation: float-pulse 3s ease-in-out infinite;
+}
+
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate {
+  animation: hero-fade-in 1s ease forwards;
+}
+
+.hero-animate-delay-1 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+.hero-animate-delay-2 {
+  animation-delay: 0.6s;
+  opacity: 0;
+}
+.hero-animate-delay-3 {
+  animation-delay: 0.9s;
+  opacity: 0;
+}
+.hero-animate-delay-4 {
+  animation-delay: 1.2s;
+  opacity: 0;
+}
+
+@keyframes grow-line {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--line-height, 120px);
+    opacity: 1;
+  }
+}
+
+.line-grow {
+  animation: grow-line 1s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes gentle-sway {
+  0%,
+  100% {
+    transform: rotate(-1.5deg);
+  }
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+
+.sway {
+  animation: gentle-sway 4s ease-in-out infinite;
+  transform-origin: bottom center;
 }
