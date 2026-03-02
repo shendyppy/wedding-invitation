@@ -11,12 +11,12 @@ export function BrideGroomSection() {
     <>
       <BrideGroomPanel
         profile={bride}
-        gifSrc="/assets/bride-to-be.gif"
+        gifSrc="/assets/bride.GIF"
         gifPosition="right"
       />
       <BrideGroomPanel
         profile={groom}
-        gifSrc="/assets/grooms-to-be.gif"
+        gifSrc="/assets/grooms.GIF"
         gifPosition="left"
       />
     </>
