@@ -9,7 +9,7 @@ export const WEDDING_DATA: WeddingData = {
   bride: {
     fullName: "Stevana Oktavia Yohans",
     photoSrc: "/assets/stevana.jpeg",
-    sketchSrc: "/assets/bride-to-be.GIF",
+    sketchSrc: "/assets/bride-to-be.gif",
     role: "bride",
     description: "Youngest daughter of",
     fatherName: "Mr. Benny Yohans",
@@ -18,7 +18,7 @@ export const WEDDING_DATA: WeddingData = {
   groom: {
     fullName: "Muchamad Zulfikar",
     photoSrc: "/assets/zulfikar.jpeg",
-    sketchSrc: "/assets/grooms-to-be.GIF",
+    sketchSrc: "/assets/grooms-to-be.gif",
     role: "groom",
     description: "Youngest son of",
     fatherName: "Mr. Triono Usmanto",
@@ -32,7 +32,7 @@ export const WEDDING_DATA: WeddingData = {
   },
   schedule: [
     { name: "Akad Nikah", startTime: "08.30", endTime: "11.00" },
-    { name: "Resepsi", startTime: "11.30", endTime: "14.00" },
+    { name: "Resepsi", startTime: "11.30", endTime: "13.30" },
   ],
   story: [
     "We first met in 2017 while attending the same university. Four years apart and from different majors, we probably would have never crossed paths — but somehow, we did.",

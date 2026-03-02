@@ -5,6 +5,7 @@
 export { HeroSection } from "./HeroSection";
 export { CoupleNamesSection } from "./CoupleNamesSection";
 export { CountdownSection } from "./CountdownSection";
+export { BrideGroomIntroSection } from "./BrideGroomIntroSection";
 export { BrideGroomSection } from "./BrideGroomSection";
 export { OurStorySection } from "./OurStorySection";
 export { EventVenueSection } from "./EventVenueSection";

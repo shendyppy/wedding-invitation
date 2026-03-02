@@ -7,11 +7,12 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   HeroSection,
   CoupleNamesSection,
   CountdownSection,
+  BrideGroomIntroSection,
   BrideGroomSection,
   OurStorySection,
   EventVenueSection,
@@ -29,10 +30,30 @@ interface InvitationTemplateProps {
 export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio("/assets/music.mp3");
+    audio.loop = true;
+    audio.volume = 0.4;
+    audioRef.current = audio;
+    return () => {
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, []);
 
   const handleOpenInvitation = () => {
     setIsOpen(true);
+    // Play music immediately — this runs inside a click handler (user gesture)
+    if (audioRef.current && !isMusicPlaying) {
+      audioRef.current
+        .play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(() => {});
+    }
     setTimeout(() => {
       setShowContent(true);
       setTimeout(() => {
@@ -65,6 +86,7 @@ export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
         >
           <CoupleNamesSection />
           <CountdownSection />
+          <BrideGroomIntroSection />
           <BrideGroomSection />
           <OurStorySection />
           <EventVenueSection />
@@ -76,7 +98,13 @@ export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
       )}
 
       {/* Floating music toggle — shown after opening */}
-      {isOpen && <MusicToggle />}
+      {isOpen && (
+        <MusicToggle
+          audioRef={audioRef}
+          isPlaying={isMusicPlaying}
+          setIsPlaying={setIsMusicPlaying}
+        />
+      )}
     </div>
   );
 }

@@ -27,9 +27,9 @@ export function CoupleNamesSection() {
         ref={ref}
         className="relative z-10 flex flex-col items-center justify-center w-full flex-1 px-4"
       >
-        <div className="flex items-stretch justify-center w-full h-[40vh]">
+        <div className="flex items-stretch justify-center w-full h-[35vh] sm:h-[40vh]">
           <div
-            className={`anim-slide-left ${vis} flex-1 flex flex-col items-center justify-start pr-8 pt-[8%]`}
+            className={`anim-slide-left ${vis} flex-1 flex flex-col items-center justify-start pr-3! sm:pr-5! pt-[8%]`}
           >
             <p className="font-serif font-semibold text-[var(--color-warm-gray)] tracking-[0.2em] uppercase text-2xl leading-tight text-right">
               Stevana
@@ -41,11 +41,17 @@ export function CoupleNamesSection() {
 
           <div
             className={`${vis ? "line-grow" : ""} w-px bg-[var(--color-warm-gray)]/50 shrink-0`}
-            style={{ "--line-height": "50vh", height: isVisible ? "55vh" : "0", opacity: isVisible ? 1 : 0 } as React.CSSProperties}
+            style={
+              {
+                "--line-height": "50vh",
+                height: isVisible ? "55vh" : "0",
+                opacity: isVisible ? 1 : 0,
+              } as React.CSSProperties
+            }
           />
 
           <div
-            className={`anim-slide-right ${vis} flex-1 flex flex-col items-center justify-end pl-8 pb-[15%]`}
+            className={`anim-slide-right ${vis} flex-1 flex flex-col items-center justify-end pl-3! sm:pl-5! pb-[15%]`}
           >
             <p className="font-serif font-semibold text-[var(--color-warm-gray)] tracking-[0.2em] uppercase text-2xl leading-tight">
               Muchamad
@@ -57,10 +63,10 @@ export function CoupleNamesSection() {
         </div>
 
         <div
-          className={`anim-fade-up ${vis} anim-delay-400 relative mt-auto w-full max-w-100 h-120`}
+          className={`anim-fade-up ${vis} anim-delay-400 relative mt-auto w-full max-w-100 h-120 z-50`}
         >
           <Image
-            src="/assets/together-to-be.GIF"
+            src="/assets/together-to-be.gif"
             alt="Stevana & Zulfikar"
             fill
             className="object-contain"

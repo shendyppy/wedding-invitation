@@ -35,7 +35,7 @@ export function Select({
       )}
       <select
         id={selectId}
-        className={`w-full px-4 py-3 bg-[var(--color-soft-beige)] text-[var(--color-dark-olive)] border border-transparent rounded-[var(--radius-sm)] font-sans text-sm outline-none focus:border-[var(--color-olive)] transition-colors duration-300 appearance-none cursor-pointer ${className}`.trim()}
+        className={`w-full px-5! py-3.5! bg-[var(--color-soft-beige)]! text-[var(--color-dark-olive)] border border-[var(--color-warm-gray)]/20 rounded-xl! font-sans text-sm outline-none focus:border-[var(--color-olive)] transition-all duration-300 appearance-none cursor-pointer ${className}`.trim()}
         defaultValue=""
         {...props}
       >
