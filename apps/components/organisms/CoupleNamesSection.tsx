@@ -66,7 +66,7 @@ export function CoupleNamesSection() {
           className={`anim-fade-up ${vis} anim-delay-400 relative mt-auto w-full max-w-100 h-120 z-50`}
         >
           <Image
-            src="/assets/together-to-be.gif"
+            src="/assets/couple.GIF"
             alt="Stevana & Zulfikar"
             fill
             className="object-contain"

@@ -9,7 +9,7 @@ export const WEDDING_DATA: WeddingData = {
   bride: {
     fullName: "Stevana Oktavia Yohans",
     photoSrc: "/assets/stevana.jpeg",
-    sketchSrc: "/assets/bride-to-be.gif",
+    sketchSrc: "/assets/bride.GIF",
     role: "bride",
     description: "Youngest daughter of",
     fatherName: "Mr. Benny Yohans",
@@ -18,7 +18,7 @@ export const WEDDING_DATA: WeddingData = {
   groom: {
     fullName: "Muchamad Zulfikar",
     photoSrc: "/assets/zulfikar.jpeg",
-    sketchSrc: "/assets/grooms-to-be.gif",
+    sketchSrc: "/assets/grooms.GIF",
     role: "groom",
     description: "Youngest son of",
     fatherName: "Mr. Triono Usmanto",

@@ -66,7 +66,7 @@ function BankCard({
 
   return (
     <div
-      className={`anim-fade-up ${isVisible ? "is-visible" : ""} flex flex-col items-center text-center py-6 gap-3`}
+      className={`anim-fade-up ${isVisible ? "is-visible" : ""} flex flex-col items-center text-center py-3! gap-3`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       <div className="relative w-[140px] h-[90px] sm:w-[160px] sm:h-[100px]">
