@@ -81,6 +81,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -90,6 +91,9 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 img,
@@ -120,10 +124,8 @@ a {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
+  /* Hide horizontal overflow while allowing vertical GIF overflow */
   overflow-x: hidden;
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -167,8 +169,10 @@ a {
 }
 
 .invitation-section {
-  scroll-snap-align: start;
+  /* Removed scroll-snap-align for smooth scrolling */
   min-height: 100vh;
+  /* Ensure section grows with content on smaller screens */
+  height: fit-content;
 }
 
 .section-padding {

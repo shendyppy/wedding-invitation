@@ -21,13 +21,13 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
     >
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/hero-background.jpeg"
+          src="/assets/hero-bg.webp"
           alt="Stevana & Zulfikar"
           fill
           className="object-cover object-center"
           priority
-          quality={95}
-          sizes="480px"
+          quality={98}
+          sizes="(max-width: 640px) 100vw, 480px"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black/10" />
       </div>
@@ -47,19 +47,19 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
         <div className="hero-animate hero-animate-delay-2 flex flex-col items-center mt-2">
           <span
             className="text-white leading-none text-[clamp(3rem,15vw,4.5rem)]"
-            style={{ fontFamily: "'Love Light', cursive, sans-serif" }}
+            style={{ fontFamily: "var(--font-script)" }}
           >
             {bride.fullName.split(" ")[0]}
           </span>
           <span
             className="text-white/70 -mt-2 text-[clamp(1.8rem,8vw,2.8rem)]"
-            style={{ fontFamily: "'Love Light', cursive, sans-serif" }}
+            style={{ fontFamily: "var(--font-script)" }}
           >
             &amp;
           </span>
           <span
             className="text-white leading-none -mt-2 text-[clamp(3rem,15vw,4.5rem)]"
-            style={{ fontFamily: "'Love Light', cursive, sans-serif" }}
+            style={{ fontFamily: "var(--font-script)" }}
           >
             {groom.fullName.split(" ").pop()}
           </span>

@@ -2,7 +2,6 @@
 // InvitationTemplate — Template
 // Assembles all organisms into the full invitation page layout.
 // Includes floating music toggle and open transition.
-// Each section snaps to full screen on scroll.
 // ============================================================
 
 "use client";
@@ -34,6 +33,21 @@ export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Lock scroll initially
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     const audio = new Audio("/assets/music.mp3");
     audio.loop = true;
@@ -56,13 +70,11 @@ export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
     }
     setTimeout(() => {
       setShowContent(true);
+      // Scroll to couple-names section after content is revealed
       setTimeout(() => {
         const coupleSection = document.getElementById("couple-names");
         if (coupleSection && containerRef.current) {
-          containerRef.current.scrollTo({
-            top: coupleSection.offsetTop,
-            behavior: "smooth",
-          });
+          coupleSection.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
     }, 50);

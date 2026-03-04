@@ -17,11 +17,13 @@ export function EventVenueSection() {
     >
       <div className="absolute bottom-0 left-0 right-0 h-[55vh] z-0">
         <Image
-          src="/assets/event-and-venue-background.png"
+          src="/assets/event-and-venue-background.webp"
           alt=""
           fill
           className="object-cover object-top"
-          sizes="480px"
+          sizes="(max-width: 640px) 100vw, 480px"
+          priority
+          quality={85}
           aria-hidden="true"
         />
         <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-[var(--color-soft-beige)] to-transparent" />
@@ -68,7 +70,6 @@ export function EventVenueSection() {
             }}
           >
             {schedule.map((item, i) => {
-              const isFirstItem = i === 0;
               const isLastItem = i === schedule.length - 1;
 
               return (

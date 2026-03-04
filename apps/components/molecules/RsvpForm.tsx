@@ -19,6 +19,13 @@ const ATTENDANCE_OPTIONS = [
   { value: "tidak_hadir", label: "Tidak Hadir" },
 ];
 
+const GUEST_COUNT_OPTIONS = [
+  { value: "1", label: "1 Orang" },
+  { value: "2", label: "2 Orang" },
+  { value: "3", label: "3 Orang" },
+  { value: "4", label: "4 Orang" },
+];
+
 export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
   const [formData, setFormData] = useState<RsvpFormData>({
     name: "",
@@ -47,11 +54,10 @@ export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
         required
       />
 
-      <Input
+      <Select
         label="Jumlah Tamu"
-        placeholder="Jumlah Tamu"
-        type="number"
-        min="1"
+        placeholder="Pilih Jumlah Tamu"
+        options={GUEST_COUNT_OPTIONS}
         value={formData.guestCount}
         onChange={(e) =>
           setFormData((prev) => ({ ...prev, guestCount: e.target.value }))

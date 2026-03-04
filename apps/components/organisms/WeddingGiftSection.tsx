@@ -16,7 +16,7 @@ export function WeddingGiftSection() {
       className="invitation-section relative w-full flex flex-col items-center justify-center overflow-hidden bg-[var(--color-soft-beige)]"
     >
       <div className="absolute inset-0 z-0">
-        <Image src="/assets/core-background.jpg" alt="" fill className="object-cover" sizes="480px" aria-hidden="true" />
+        <Image src="/assets/core-background.webp" alt="" fill className="object-cover" sizes="(max-width: 640px) 100vw, 480px" quality={92} aria-hidden="true" />
       </div>
 
       <div ref={ref} className="relative z-10 flex flex-col items-center justify-center w-full flex-1 px-6!">
@@ -31,7 +31,7 @@ export function WeddingGiftSection() {
 
           {bankAccounts.map((account, i) => (
             <div key={account.bankName}>
-              <BankCard account={account} isVisible={isVisible} delay={(i + 1) * 200} />
+              <BankCard account={account} isVisible={isVisible} delayIndex={i} />
               {i < bankAccounts.length - 1 && (
                 <div className="flex justify-center my-6!">
                   <div className="w-3/4 h-px bg-[var(--color-warm-gray)]/20" />
@@ -48,11 +48,11 @@ export function WeddingGiftSection() {
 function BankCard({
   account,
   isVisible,
-  delay,
+  delayIndex,
 }: {
   account: (typeof WEDDING_DATA.bankAccounts)[number];
   isVisible: boolean;
-  delay: number;
+  delayIndex: number;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -64,13 +64,14 @@ function BankCard({
     } catch { /* noop */ }
   };
 
+  const delayClass = delayIndex === 0 ? "anim-delay-300" : "anim-delay-500";
+
   return (
     <div
-      className={`anim-fade-up ${isVisible ? "is-visible" : ""} flex flex-col items-center text-center py-3! gap-3`}
-      style={{ transitionDelay: `${delay}ms` }}
+      className={`anim-fade-up ${isVisible ? "is-visible" : ""} ${delayClass} flex flex-col items-center text-center py-3! gap-3`}
     >
       <div className="relative w-[140px] h-[90px] sm:w-[160px] sm:h-[100px]">
-        <Image src={account.bankLogoSrc} alt={`Logo ${account.bankName}`} fill className="object-contain" sizes="(max-width: 400px) 140px, 160px" />
+        <Image src={account.bankLogoSrc} alt={`Logo ${account.bankName}`} fill className="object-contain" sizes="(max-width: 400px) 140px, 160px" quality={98} unoptimized />
       </div>
       <p className="font-serif font-bold text-[var(--color-olive)] tracking-widest text-2xl">{account.accountNumber}</p>
       <p className="font-sans text-[var(--color-warm-gray)] text-sm">A/N {account.accountHolder}</p>

@@ -15,12 +15,13 @@ export function BrideGroomIntroSection() {
       {/* Photo — ~70% of the section */}
       <div className="relative w-full flex-1" style={{ flexBasis: "70%" }}>
         <Image
-          src="/assets/the-bride-and-groom-bg.jpeg"
+          src="/assets/the-bride-and-groom-bg.webp"
           alt="Stevana & Zulfikar"
           fill
           className="object-cover object-center"
-          quality={95}
-          sizes="480px"
+          quality={98}
+          sizes="(max-width: 640px) 100vw, 480px"
+          priority
         />
         {/* subtle gradient at bottom to blend into banner */}
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent to-[var(--color-dark-olive)]/80" />

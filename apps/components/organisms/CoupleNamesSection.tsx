@@ -14,7 +14,7 @@ export function CoupleNamesSection() {
     >
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/core-background.jpg"
+          src="/assets/core-background.webp"
           alt=""
           fill
           className="object-cover"
@@ -25,9 +25,9 @@ export function CoupleNamesSection() {
 
       <div
         ref={ref}
-        className="relative z-10 flex flex-col items-center justify-center w-full flex-1 px-4"
+        className="relative flex flex-col items-center justify-center w-full flex-1 px-4"
       >
-        <div className="flex items-stretch justify-center w-full h-[35vh] sm:h-[40vh]">
+        <div className="relative z-10 flex items-stretch justify-center w-full h-[30vh] sm:h-[35vh] md:h-[40vh]">
           <div
             className={`anim-slide-left ${vis} flex-1 flex flex-col items-center justify-start pr-3! sm:pr-5! pt-[8%]`}
           >
@@ -43,8 +43,8 @@ export function CoupleNamesSection() {
             className={`${vis ? "line-grow" : ""} w-px bg-[var(--color-warm-gray)]/50 shrink-0`}
             style={
               {
-                "--line-height": "50vh",
-                height: isVisible ? "55vh" : "0",
+                "--line-height": "clamp(35vh, 45vh, 50vh)",
+                height: isVisible ? "clamp(40vh, 50vh, 55vh)" : "0",
                 opacity: isVisible ? 1 : 0,
               } as React.CSSProperties
             }
@@ -62,15 +62,16 @@ export function CoupleNamesSection() {
           </div>
         </div>
 
+        {/* GIF - positioned to be in front of names */}
         <div
-          className={`anim-fade-up ${vis} anim-delay-400 relative mt-auto w-full max-w-100 h-120 z-50`}
+          className={`anim-fade-up ${vis} anim-delay-400 relative mt-auto w-full max-w-100 h-140 z-[100]!`}
         >
           <Image
             src="/assets/couple.GIF"
             alt="Stevana & Zulfikar"
             fill
             className="object-contain"
-            sizes="400px"
+            sizes="(max-width: 640px) 100vw, 400px"
             unoptimized
           />
         </div>
