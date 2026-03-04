@@ -34,10 +34,10 @@ function BrideGroomPanel({ profile, gifSrc, gifPosition }: PanelProps) {
   const vis = isVisible ? "is-visible" : "";
 
   return (
-    <section className="invitation-section relative w-full flex flex-col items-center overflow-hidden bg-[var(--color-dark-olive)]">
+    <section className="invitation-section relative w-full flex flex-col items-center overflow-visible bg-[var(--color-dark-olive)]">
       <div
         ref={ref}
-        className="relative z-10 flex flex-col items-center justify-center w-full flex-1 px-6! py-16! gap-6"
+        className="flex flex-col items-center justify-center w-full flex-1 px-6! py-16! gap-6"
       >
         <div
           className={`anim-scale-in ${vis} relative overflow-hidden w-[70vw] max-w-[280px] h-[95vw] max-h-[380px]`}
@@ -47,8 +47,9 @@ function BrideGroomPanel({ profile, gifSrc, gifPosition }: PanelProps) {
             alt={profile.fullName}
             fill
             className="object-cover"
-            quality={95}
+            quality={98}
             sizes="(max-width: 400px) 280px, 280px"
+            priority
           />
         </div>
 
@@ -73,16 +74,18 @@ function BrideGroomPanel({ profile, gifSrc, gifPosition }: PanelProps) {
         </div>
       </div>
 
+      {/* GIF illustration - positioned outside section to overflow properly */}
       <div
-        className={`absolute bottom-0 ${gifPosition === "right" ? "right-0" : "left-0"} z-50! opacity-40 pointer-events-none w-1/2 h-[50vh]`}
+        className={`absolute ${gifPosition === "right" ? "-right-15 bottom-0" : "-left-15 -bottom-7"} z-[1000]! pointer-events-none w-[60%] h-[50%]`}
       >
         <Image
           src={gifSrc}
           alt=""
           fill
           className="object-contain object-bottom"
-          sizes="240px"
+          sizes="(max-width: 640px) 60vw, 300px"
           unoptimized
+          priority
           aria-hidden="true"
         />
       </div>

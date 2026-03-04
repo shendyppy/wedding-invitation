@@ -34,7 +34,7 @@ export function MusicToggle({
     <button
       onClick={toggle}
       aria-label={isPlaying ? "Pause music" : "Play music"}
-      className={`fixed bottom-6 right-4 z-50 size-10 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none ${isPlaying ? "music-btn-float" : "hover:scale-110"}`}
+      className={`fixed bottom-4 right-3 z-50 size-10 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none sm:bottom-6 sm:right-4 ${isPlaying ? "music-btn-float" : "hover:scale-110"}`}
     >
       <div
         className={`relative size-10 rounded-full overflow-hidden shadow-lg ${isPlaying ? "music-btn-spin" : ""}`}
@@ -49,17 +49,6 @@ export function MusicToggle({
               "repeating-radial-gradient(circle at center, transparent 0px, transparent 4px, rgba(255,255,255,0.06) 4px, rgba(255,255,255,0.06) 5px)",
           }}
         />
-
-        <div className="absolute inset-[18%] rounded-full overflow-hidden">
-          <Image
-            src="/assets/together-to-be.gif"
-            alt=""
-            fill
-            className="object-cover"
-            sizes="34px"
-            unoptimized
-          />
-        </div>
 
         <div className="absolute inset-[44%] rounded-full bg-black/60" />
 

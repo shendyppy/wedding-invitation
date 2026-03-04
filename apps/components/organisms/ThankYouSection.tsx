@@ -15,11 +15,12 @@ export function ThankYouSection() {
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/core-background.jpg"
+          src="/assets/core-background.webp"
           alt=""
           fill
           className="object-cover"
-          sizes="480px"
+          sizes="(max-width: 640px) 100vw, 480px"
+          quality={92}
           aria-hidden="true"
         />
       </div>
@@ -34,12 +35,13 @@ export function ThankYouSection() {
           style={{ aspectRatio: "3/4" }}
         >
           <Image
-            src="/assets/thank-you-image.jpeg"
+            src="/assets/thank-you-image.webp"
             alt="Stevana & Zulfikar"
             fill
             className="object-cover object-center"
-            quality={95}
-            sizes="380px"
+            quality={98}
+            sizes="(max-width: 640px) 100vw, 380px"
+            priority
           />
         </div>
 

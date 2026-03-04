@@ -26,14 +26,17 @@ export function OurStorySection() {
             Our Story
           </h2>
 
-          {story.map((paragraph, i) => (
-            <p
-              key={i}
-              className={`anim-fade-up ${vis} anim-delay-${(i + 1) * 100} font-serif italic text-white/90 text-sm! leading-7 text-center px-2`}
-            >
-              {paragraph}
-            </p>
-          ))}
+          {story.map((paragraph, i) => {
+            const delayClass = i === 0 ? "anim-delay-100" : i === 1 ? "anim-delay-200" : i === 2 ? "anim-delay-300" : "anim-delay-400";
+            return (
+              <p
+                key={i}
+                className={`anim-fade-up ${vis} ${delayClass} font-serif italic text-white/90 text-sm! leading-7 text-center px-2`}
+              >
+                {paragraph}
+              </p>
+            );
+          })}
         </div>
       </div>
     </section>

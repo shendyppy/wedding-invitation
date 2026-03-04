@@ -8,7 +8,7 @@ import type { WeddingData, WishEntry } from "@/types";
 export const WEDDING_DATA: WeddingData = {
   bride: {
     fullName: "Stevana Oktavia Yohans",
-    photoSrc: "/assets/stevana.jpeg",
+    photoSrc: "/assets/stevana.webp",
     sketchSrc: "/assets/bride.GIF",
     role: "bride",
     description: "Youngest daughter of",
@@ -17,7 +17,7 @@ export const WEDDING_DATA: WeddingData = {
   },
   groom: {
     fullName: "Muchamad Zulfikar",
-    photoSrc: "/assets/zulfikar.jpeg",
+    photoSrc: "/assets/zulfikar.webp",
     sketchSrc: "/assets/grooms.GIF",
     role: "groom",
     description: "Youngest son of",
@@ -32,7 +32,7 @@ export const WEDDING_DATA: WeddingData = {
   },
   schedule: [
     { name: "Akad Nikah", startTime: "08.30", endTime: "11.00" },
-    { name: "Resepsi", startTime: "11.30", endTime: "13.30" },
+    { name: "Ramah Tamah", startTime: "11.30", endTime: "13.30" },
   ],
   story: [
     "We first met in 2017 while attending the same university. Four years apart and from different majors, we probably would have never crossed paths — but somehow, we did.",
@@ -43,13 +43,13 @@ export const WEDDING_DATA: WeddingData = {
   bankAccounts: [
     {
       bankName: "BCA",
-      bankLogoSrc: "/assets/logo-bca.png",
+      bankLogoSrc: "/assets/logo-bca.webp",
       accountNumber: "0861063061",
       accountHolder: "Stevana Oktavia Yohans",
     },
     {
       bankName: "BNI",
-      bankLogoSrc: "/assets/logo-bni.png",
+      bankLogoSrc: "/assets/logo-bni.webp",
       accountNumber: "0287121846",
       accountHolder: "Muchamad Zulfikar",
     },

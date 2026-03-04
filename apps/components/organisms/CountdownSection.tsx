@@ -23,11 +23,12 @@ export function CountdownSection() {
     >
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/core-background.jpg"
+          src="/assets/core-background.webp"
           alt=""
           fill
           className="object-cover"
-          sizes="480px"
+          sizes="(max-width: 640px) 100vw, 480px"
+          quality={92}
           aria-hidden="true"
         />
       </div>
@@ -48,8 +49,8 @@ export function CountdownSection() {
           className={`${vis ? "line-grow" : ""} w-px bg-[var(--color-warm-gray)]/40`}
           style={
             {
-              "--line-height": "40vh",
-              height: isVisible ? "40vh" : "0",
+              "--line-height": "clamp(25vh, 35vh, 40vh)",
+              height: isVisible ? "clamp(30vh, 35vh, 40vh)" : "0",
               opacity: isVisible ? 1 : 0,
             } as React.CSSProperties
           }
