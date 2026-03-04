@@ -1,8 +1,9 @@
 // ============================================================
 // /invite/[token] — Dynamic Invitation Page
-// Each guest has a unique token that maps to their name.
+// Each guest has a unique token that maps to their data in Supabase.
 // ============================================================
 
+import { notFound } from "next/navigation";
 import { InvitationTemplate } from "@/components/templates";
 
 interface InvitePageProps {
@@ -11,17 +12,40 @@ interface InvitePageProps {
 
 /**
  * Dynamic invite page.
- * In future, the token will be looked up from Supabase to fetch
- * the guest name and quota. For now, we use a placeholder.
+ * Fetches guest data from Supabase by unique token.
  */
 export default async function InvitePage({ params }: InvitePageProps) {
   const { token } = await params;
 
-  // TODO: Replace with Supabase lookup
-  // const guest = await supabase.from('guests').select('*').eq('unique_token', token).single();
-  const guestName = decodeURIComponent(token).replace(/-/g, " ");
+  // Fetch guest from Supabase
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/guest/${token}`,
+    {
+      cache: "no-store",
+    }
+  );
 
-  return <InvitationTemplate guestName={guestName} />;
+  if (!response.ok) {
+    notFound();
+  }
+
+  const result = await response.json();
+
+  if (!result.success) {
+    notFound();
+  }
+
+  const { id, name, maxQuota, rsvp } = result.data;
+
+  return (
+    <InvitationTemplate
+      guestName={name}
+      guestToken={token}
+      guestId={id}
+      maxQuota={maxQuota}
+      existingRsvp={rsvp}
+    />
+  );
 }
 
 /**
@@ -29,7 +53,24 @@ export default async function InvitePage({ params }: InvitePageProps) {
  */
 export async function generateMetadata({ params }: InvitePageProps) {
   const { token } = await params;
-  const guestName = decodeURIComponent(token).replace(/-/g, " ");
+
+  // Fetch guest for metadata
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/guest/${token}`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    return {
+      title: "Wedding Invitation",
+      description: "You are invited to a wedding celebration.",
+    };
+  }
+
+  const result = await response.json();
+  const guestName = result.success ? result.data.name : "Guest";
 
   return {
     title: `Wedding Invitation — ${guestName}`,

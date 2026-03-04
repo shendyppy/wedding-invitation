@@ -1,0 +1,25 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "1d27eb3ec809461fb49234f2e01c61fc.F2EEL9Z1JEl9UR90",
+    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+    "API_TIMEOUT_MS": "3000000",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.7"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(tail:*)",
+      "Bash(curl:*)",
+      "Bash(head:*)",
+      "Bash(cd:*)",
+      "Bash(cd apps:*)",
+      "Bash(cd \"C:/Project/Shendy/Wedding Invitation/wedding-invitation/apps\" && npx prisma generate 2>&1)",
+      "Bash(cd \"C:/Project/Shendy/Wedding Invitation/wedding-invitation/apps\" && npx tsc --noEmit 2>&1)",
+      "Bash(cd \"C:/Project/Shendy/Wedding Invitation/wedding-invitation/apps\" && npx prisma migrate dev --name init 2>&1)",
+      "Bash(cd \"C:/Project/Shendy/Wedding Invitation/wedding-invitation/apps\" && npm run build 2>&1)",
+      "Bash(cd \"C:/Project/Shendy/Wedding Invitation/wedding-invitation/apps\" && npx prisma migrate dev --name add_rsvp_tracking_and_bank_audit 2>&1)"
+    ]
+  }
+}

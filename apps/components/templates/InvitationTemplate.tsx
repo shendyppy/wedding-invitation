@@ -24,9 +24,22 @@ import { MusicToggle } from "@/components/atoms";
 
 interface InvitationTemplateProps {
   guestName?: string;
+  guestToken?: string;
+  guestId?: string;
+  maxQuota?: number;
+  existingRsvp?: {
+    attendanceStatus: "hadir" | "tidak_hadir";
+    numberOfAttendees: number;
+  } | null;
 }
 
-export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
+export function InvitationTemplate({
+  guestName,
+  guestToken,
+  guestId,
+  maxQuota = 2,
+  existingRsvp = null,
+}: InvitationTemplateProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
@@ -102,8 +115,13 @@ export function InvitationTemplate({ guestName }: InvitationTemplateProps) {
           <BrideGroomSection />
           <OurStorySection />
           <EventVenueSection />
-          <RsvpWishesSection />
-          <WeddingGiftSection />
+          <RsvpWishesSection
+guestToken={guestToken}
+guestId={guestId}
+maxQuota={maxQuota}
+existingRsvp={existingRsvp}
+/>
+          <WeddingGiftSection guestId={guestId} guestName={guestName} />
           <ThankYouSection />
           <Footer />
         </div>

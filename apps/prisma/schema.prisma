@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AttendanceStatus {
+  hadir
+  tidak_hadir
+}
+
+model Guest {
+  id          String   @id @default(uuid())
+  name        String
+  phone       String?
+  maxQuota    Int      @default(2)
+  uniqueToken String   @unique
+  isOpened    Boolean  @default(false)
+  rsvpSubmitted Boolean @default(false)
+  rsvpSubmittedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rsvp   Rsvp?
+  wishes Wish[]
+  bankCopyLogs BankCopyLog[]
+
+  @@map("guests")
+  @@index([uniqueToken])
+}
+
+model Rsvp {
+  id                String          @id @default(uuid())
+  guestId           String          @unique
+  attendanceStatus  AttendanceStatus
+  numberOfAttendees Int
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@map("rsvp")
+  @@index([guestId])
+}
+
+model Wish {
+  id               String           @id @default(uuid())
+  guestId          String?
+  name             String
+  message          String
+  attendanceStatus AttendanceStatus?
+  isPublic         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@map("wishes")
+  @@index([createdAt(sort: Desc)])
+}
+
+model BankCopyLog {
+  id        String   @id @default(uuid())
+  guestId   String?
+  guestName String
+  bankName  String
+  accountNumber String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@map("bank_copy_logs")
+  @@index([guestId])
+  @@index([createdAt(sort: Desc)])
+}
