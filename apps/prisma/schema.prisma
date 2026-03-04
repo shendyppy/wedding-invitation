@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AttendanceStatus {
+  hadir
+  tidak_hadir
+}
+
+model Guest {
+  id          String   @id @default(uuid())
+  name        String
+  phone       String?
+  maxQuota    Int      @default(2)
+  uniqueToken String   @unique
+  isOpened    Boolean  @default(false)
+  rsvpSubmitted Boolean @default(false)
+  rsvpSubmittedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rsvp   Rsvp?
+  wishes Wish[]
+  actionLogs   ActionLog[]
+
+  @@map("guests")
+  @@index([uniqueToken])
+}
+
+model Rsvp {
+  id                String          @id @default(uuid())
+  guestId           String          @unique
+  attendanceStatus  AttendanceStatus
+  numberOfAttendees Int
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  guest Guest @relation(fields: [guestId], references: [id], onDelete: Cascade)
+
+  @@map("rsvp")
+  @@index([guestId])
+}
+
+model Wish {
+  id               String           @id @default(uuid())
+  guestId          String?
+  name             String
+  message          String
+  attendanceStatus AttendanceStatus?
+  isPublic         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@map("wishes")
+  @@index([createdAt(sort: Desc)])
+}
+
+enum ActionType {
+  BANK_COPY
+  SEE_LOCATION
+  SAVE_THE_DATE
+  OPEN_INVITATION
+  COPY_LINK
+  SUBMIT_RSVP
+  SUBMIT_WISH
+  OTHER
+}
+
+model ActionLog {
+  id         String     @id @default(uuid())
+  guestId    String?
+  guestName  String
+  actionType ActionType
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime   @default(now())
+
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@map("action_logs")
+  @@index([guestId])
+  @@index([actionType])
+  @@index([createdAt(sort: Desc)])
+}
+

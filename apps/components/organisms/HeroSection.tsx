@@ -19,7 +19,7 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
       id="hero"
       className="invitation-section relative w-full flex flex-col items-center justify-start text-center text-white overflow-hidden pt-24!"
     >
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 right-0 z-0">
         <Image
           src="/assets/hero-bg.webp"
           alt="Stevana & Zulfikar"

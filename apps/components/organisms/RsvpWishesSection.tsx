@@ -1,26 +1,91 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { RsvpForm, WishCard } from "@/components/molecules";
-import { SAMPLE_WISHES } from "@/constants/wedding-data";
-import type { RsvpFormData, WishEntry } from "@/types";
+import type { RsvpFormData, WishEntry, Wish } from "@/types";
 
-export function RsvpWishesSection() {
-  const [wishes, setWishes] = useState<WishEntry[]>(SAMPLE_WISHES);
+interface RsvpWishesSectionProps {
+  guestToken?: string;
+  guestId?: string;
+  guestName?: string;
+  maxQuota?: number;
+  existingRsvp?: {
+    attendanceStatus: "hadir" | "tidak_hadir";
+    numberOfAttendees: number;
+  } | null;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
+}
+
+function mapDbWishToWishEntry(wish: Wish): WishEntry {
+  return {
+    id: wish.id,
+    name: wish.name,
+    attendance: wish.attendanceStatus || "",
+    message: wish.message,
+  };
+}
+
+export function RsvpWishesSection({
+  guestToken,
+  guestId,
+  guestName,
+  maxQuota = 2,
+  existingRsvp = null,
+  logAction,
+}: RsvpWishesSectionProps) {
+  const [wishes, setWishes] = useState<WishEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.05 });
   const vis = isVisible ? "is-visible" : "";
 
-  const handleSubmit = (data: RsvpFormData) => {
-    setWishes((prev) => [
-      {
-        id: Date.now().toString(),
-        name: data.name,
-        attendance: data.attendance,
-        message: data.message,
-      },
-      ...prev,
-    ]);
+  // Fetch wishes on mount
+  useEffect(() => {
+    async function fetchWishes() {
+      try {
+        const response = await fetch("/api/wishes");
+        const result = await response.json();
+
+        if (result.success) {
+          setWishes(result.data.map(mapDbWishToWishEntry));
+        }
+      } catch (error) {
+        console.error("Failed to fetch wishes:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchWishes();
+  }, []);
+
+  const handleRsvpSubmit = (data: RsvpFormData) => {
+    // Optionally refresh wishes after RSVP submission
+    // The wish is submitted in the form, so we can fetch again
+    async function refreshWishes() {
+      try {
+        const response = await fetch("/api/wishes");
+        const result = await response.json();
+
+        if (result.success) {
+          setWishes(result.data.map(mapDbWishToWishEntry));
+        }
+      } catch (error) {
+        console.error("Failed to refresh wishes:", error);
+      }
+    }
+
+    refreshWishes();
+  };
+
+  const handleRsvpSuccess = () => {
+    // Trigger wish refresh after successful RSVP
+    handleRsvpSubmit({
+      name: "",
+      guestCount: "",
+      attendance: "",
+      message: "",
+    });
   };
 
   return (
@@ -41,7 +106,16 @@ export function RsvpWishesSection() {
 
         {/* Form */}
         <div className={`anim-fade-up ${vis} anim-delay-200`}>
-          <RsvpForm onSubmit={handleSubmit} />
+          <RsvpForm
+            guestToken={guestToken}
+            guestId={guestId}
+            guestName={guestName}
+            maxQuota={maxQuota}
+            existingRsvp={existingRsvp}
+            onSubmit={handleRsvpSubmit}
+            onSuccess={handleRsvpSuccess}
+            logAction={logAction}
+          />
         </div>
 
         {/* Divider */}
@@ -59,9 +133,15 @@ export function RsvpWishesSection() {
         <div
           className={`anim-fade-up ${vis} anim-delay-400 flex flex-col gap-4 flex-1 overflow-y-auto max-h-[35vh] scrollbar-pretty pr-1!`}
         >
-          {wishes.map((wish) => (
-            <WishCard key={wish.id} wish={wish} />
-          ))}
+          {isLoading ? (
+            <p className="text-white/60 text-center text-sm">Loading...</p>
+          ) : wishes.length === 0 ? (
+            <p className="text-white/60 text-center text-sm">
+              Belum ada ucapan. Jadilah yang pertama!
+            </p>
+          ) : (
+            wishes.map((wish) => <WishCard key={wish.id} wish={wish} />)
+          )}
         </div>
       </div>
     </section>

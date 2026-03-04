@@ -43,14 +43,14 @@ export interface CountdownValues {
   seconds: number;
 }
 
-/** RSVP attendance status */
-export type AttendanceStatus = "hadir" | "tidak_hadir" | "";
+/** RSVP attendance status (for form - includes empty option) */
+export type FormAttendanceStatus = "hadir" | "tidak_hadir" | "";
 
 /** RSVP form data */
 export interface RsvpFormData {
   name: string;
   guestCount: string;
-  attendance: AttendanceStatus;
+  attendance: FormAttendanceStatus;
   message: string;
 }
 
@@ -58,7 +58,7 @@ export interface RsvpFormData {
 export interface WishEntry {
   id: string;
   name: string;
-  attendance: AttendanceStatus;
+  attendance: FormAttendanceStatus;
   message: string;
 }
 
@@ -103,3 +103,16 @@ export interface WeddingData {
   bankAccounts: BankAccount[];
   heroQuote: string[];
 }
+
+// ============================================================
+// Prisma Types — Export generated types
+// ============================================================
+
+// Import Prisma types with alias to avoid conflicts
+import type { AttendanceStatus as PrismaAttendanceStatus } from "@prisma/client";
+
+// Re-export with explicit type
+export type { Guest, Rsvp, Wish } from "@prisma/client";
+
+// Create a type alias for Prisma's AttendanceStatus
+export type AttendanceStatus = PrismaAttendanceStatus;

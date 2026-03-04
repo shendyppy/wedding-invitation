@@ -5,7 +5,11 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { WEDDING_DATA } from "@/constants/wedding-data";
 import { MapPin } from "lucide-react";
 
-export function EventVenueSection() {
+interface EventVenueSectionProps {
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
+}
+
+export function EventVenueSection({ logAction }: EventVenueSectionProps) {
   const { venue, schedule } = WEDDING_DATA;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.08 });
   const vis = isVisible ? "is-visible" : "";
@@ -46,7 +50,7 @@ export function EventVenueSection() {
             className={`anim-fade-up ${vis} anim-delay-100 text-center w-full`}
           >
             <p className="font-serif font-semibold text-[var(--color-dark-olive)] tracking-[0.15em] sm:tracking-[0.18em] uppercase text-lg sm:text-xl">
-              Sabtu
+              Saturday
             </p>
             <p className="font-serif font-bold text-[var(--color-olive)] leading-none my-1 sm:my-2 text-[clamp(4rem,20vw,6rem)]">
               11
@@ -111,7 +115,10 @@ export function EventVenueSection() {
               {venue.address}
             </p>
             <button
-              onClick={() => window.open(venue.mapsUrl, "_blank")}
+              onClick={() => {
+                logAction?.("SEE_LOCATION");
+                window.open(venue.mapsUrl, "_blank");
+              }}
               className="btn-base btn-olive mt-3"
             >
               See Location

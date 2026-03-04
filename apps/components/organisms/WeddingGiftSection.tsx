@@ -5,7 +5,13 @@ import Image from "next/image";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { WEDDING_DATA } from "@/constants/wedding-data";
 
-export function WeddingGiftSection() {
+interface WeddingGiftSectionProps {
+  guestId?: string;
+  guestName?: string;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
+}
+
+export function WeddingGiftSection({ guestName = "Guest", logAction }: WeddingGiftSectionProps) {
   const { bankAccounts } = WEDDING_DATA;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.08 });
   const vis = isVisible ? "is-visible" : "";
@@ -31,7 +37,12 @@ export function WeddingGiftSection() {
 
           {bankAccounts.map((account, i) => (
             <div key={account.bankName}>
-              <BankCard account={account} isVisible={isVisible} delayIndex={i} />
+              <BankCard
+                account={account}
+                isVisible={isVisible}
+                delayIndex={i}
+                logAction={logAction}
+              />
               {i < bankAccounts.length - 1 && (
                 <div className="flex justify-center my-6!">
                   <div className="w-3/4 h-px bg-[var(--color-warm-gray)]/20" />
@@ -49,10 +60,12 @@ function BankCard({
   account,
   isVisible,
   delayIndex,
+  logAction,
 }: {
   account: (typeof WEDDING_DATA.bankAccounts)[number];
   isVisible: boolean;
   delayIndex: number;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -60,6 +73,10 @@ function BankCard({
     try {
       await navigator.clipboard.writeText(account.accountNumber);
       setCopied(true);
+      logAction?.("BANK_COPY", {
+        bankName: account.bankName,
+        accountNumber: account.accountNumber,
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch { /* noop */ }
   };
@@ -75,8 +92,24 @@ function BankCard({
       </div>
       <p className="font-serif font-bold text-[var(--color-olive)] tracking-widest text-2xl">{account.accountNumber}</p>
       <p className="font-sans text-[var(--color-warm-gray)] text-sm">A/N {account.accountHolder}</p>
-      <button onClick={handleCopy} className="btn-base btn-olive mt-2">
-        {copied ? "Tersalin!" : "Salin Rekening"}
+      <button
+        onClick={handleCopy}
+        className={`btn-base mt-2 transition-all ${
+          copied
+            ? "bg-green-600 text-white"
+            : "btn-olive"
+        }`}
+      >
+        {copied ? (
+          <span className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            Tersalin!
+          </span>
+        ) : (
+          "Salin Rekening"
+        )}
       </button>
     </div>
   );

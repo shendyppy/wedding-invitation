@@ -5,12 +5,22 @@
 
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { Input, Textarea, Select, Button } from "@/components/atoms";
 import type { RsvpFormData } from "@/types";
 
 interface RsvpFormProps {
+  guestToken?: string;
+  guestId?: string;
+  guestName?: string;
+  maxQuota?: number;
+  existingRsvp?: {
+    attendanceStatus: "hadir" | "tidak_hadir";
+    numberOfAttendees: number;
+  } | null;
   onSubmit?: (data: RsvpFormData) => void;
+  onSuccess?: () => void;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
   className?: string;
 }
 
@@ -26,18 +36,112 @@ const GUEST_COUNT_OPTIONS = [
   { value: "4", label: "4 Orang" },
 ];
 
-export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
+type SubmitState = "idle" | "submitting" | "success" | "error";
+
+export function RsvpForm({
+  guestToken,
+  guestId,
+  guestName,
+  maxQuota = 2,
+  existingRsvp = null,
+  onSubmit,
+  onSuccess,
+  logAction,
+  className = "",
+}: RsvpFormProps) {
   const [formData, setFormData] = useState<RsvpFormData>({
     name: "",
     guestCount: "",
     attendance: "",
     message: "",
   });
+  const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+  // Populate form with existing RSVP data if available
+  useEffect(() => {
+    if (existingRsvp) {
+      setFormData((prev) => ({
+        ...prev,
+        attendance: existingRsvp.attendanceStatus,
+        guestCount: existingRsvp.numberOfAttendees.toString(),
+      }));
+    }
+  }, [existingRsvp]);
+
+  // Generate guest count options based on maxQuota
+  const guestCountOptions = GUEST_COUNT_OPTIONS.filter(
+    (option) => parseInt(option.value) <= maxQuota
+  );
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    onSubmit?.(formData);
+    setSubmitState("submitting");
+    setErrorMessage("");
+
+    try {
+      const numberOfAttendees = parseInt(formData.guestCount) || 0;
+
+      // Submit RSVP only if guest has a valid token
+      if (guestToken) {
+        const response = await fetch("/api/rsvp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            guestToken,
+            attendanceStatus: formData.attendance,
+            numberOfAttendees,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || "Failed to submit RSVP");
+        }
+
+        logAction?.("SUBMIT_RSVP", {
+          attendanceStatus: formData.attendance,
+          numberOfAttendees,
+        });
+      }
+
+      setSubmitState("success");
+      onSuccess?.();
+
+      // Submit wish if message is provided (works with or without token)
+      if (formData.message.trim()) {
+        await fetch("/api/wishes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            guestId: guestId || undefined,
+            name: formData.name,
+            message: formData.message,
+            attendanceStatus: formData.attendance || undefined,
+          }),
+        });
+
+        logAction?.("SUBMIT_WISH", {
+          name: formData.name,
+        });
+      }
+
+      onSubmit?.(formData);
+
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        setSubmitState("idle");
+      }, 3000);
+    } catch (error) {
+      setSubmitState("error");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to submit RSVP"
+      );
+    }
   };
+
+  const isDisabled = submitState === "submitting" || submitState === "success";
 
   return (
     <form
@@ -52,23 +156,26 @@ export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
           setFormData((prev) => ({ ...prev, name: e.target.value }))
         }
         required
+        disabled={isDisabled}
       />
 
       <Select
         label="Jumlah Tamu"
         placeholder="Pilih Jumlah Tamu"
-        options={GUEST_COUNT_OPTIONS}
+        options={guestCountOptions}
         value={formData.guestCount}
         onChange={(e) =>
           setFormData((prev) => ({ ...prev, guestCount: e.target.value }))
         }
         required
+        disabled={isDisabled}
       />
 
       <Select
         label="Konfirmasi Kehadiran"
         placeholder="Konfirmasi Kehadiran"
         options={ATTENDANCE_OPTIONS}
+        value={formData.attendance}
         onChange={(e) =>
           setFormData((prev) => ({
             ...prev,
@@ -76,6 +183,7 @@ export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
           }))
         }
         required
+        disabled={isDisabled}
       />
 
       <Textarea
@@ -85,15 +193,33 @@ export function RsvpForm({ onSubmit, className = "" }: RsvpFormProps) {
         onChange={(e) =>
           setFormData((prev) => ({ ...prev, message: e.target.value }))
         }
+        disabled={isDisabled}
       />
+
+      {submitState === "error" && (
+        <p className="text-red-300 text-sm">{errorMessage}</p>
+      )}
+
+      {submitState === "success" && (
+        <p className="text-green-300 text-sm">
+          RSVP berhasil dikirim! Terima kasih atas konfirmasi Anda.
+        </p>
+      )}
 
       <Button
         type="submit"
         variant="primary"
         size="lg"
+        disabled={isDisabled}
         className="w-full mt-1 bg-[var(--color-cream)]/50! text-white! h-9! text-sm sm:text-base"
       >
-        Confirm
+        {submitState === "submitting"
+          ? "Mengirim..."
+          : submitState === "success"
+          ? "Terkirim ✓"
+          : existingRsvp
+          ? "Update Konfirmasi"
+          : "Confirm"}
       </Button>
     </form>
   );
