@@ -29,7 +29,7 @@ model Guest {
 
   rsvp   Rsvp?
   wishes Wish[]
-  bankCopyLogs BankCopyLog[]
+  actionLogs   ActionLog[]
 
   @@map("guests")
   @@index([uniqueToken])
@@ -64,19 +64,32 @@ model Wish {
   @@index([createdAt(sort: Desc)])
 }
 
-model BankCopyLog {
-  id        String   @id @default(uuid())
-  guestId   String?
-  guestName String
-  bankName  String
-  accountNumber String
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
+enum ActionType {
+  BANK_COPY
+  SEE_LOCATION
+  SAVE_THE_DATE
+  OPEN_INVITATION
+  COPY_LINK
+  SUBMIT_RSVP
+  SUBMIT_WISH
+  OTHER
+}
+
+model ActionLog {
+  id         String     @id @default(uuid())
+  guestId    String?
+  guestName  String
+  actionType ActionType
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime   @default(now())
 
   guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
 
-  @@map("bank_copy_logs")
+  @@map("action_logs")
   @@index([guestId])
+  @@index([actionType])
   @@index([createdAt(sort: Desc)])
 }
+

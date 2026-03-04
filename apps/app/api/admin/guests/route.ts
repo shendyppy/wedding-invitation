@@ -36,9 +36,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+    const guestsWithUrls = (result.data || []).map((g) => ({
+      ...g,
+      invitationUrl: `${appUrl}/invite/${g.uniqueToken}`,
+    }));
+
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: guestsWithUrls,
     });
   } catch (error) {
     return NextResponse.json(
@@ -97,9 +103,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+    const invitationUrl = `${appUrl}/invite/${uniqueToken}`;
+
     return NextResponse.json({
       success: true,
-      data: result.data,
+      data: {
+        ...result.data,
+        invitationUrl,
+      },
     });
   } catch (error) {
     return NextResponse.json(

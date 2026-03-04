@@ -4,7 +4,7 @@
 // ============================================================
 
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Great_Vibes, Source_Sans_3, Love_Light } from "next/font/google";
+import { Cormorant_Garamond, Great_Vibes, Source_Sans_3, Love_Light, Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -35,6 +35,21 @@ const loveLight = Love_Light({
   display: "swap",
 });
 
+// Admin theme fonts
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair-display",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Stevana & Zulfikar Wedding",
   description:
@@ -55,7 +70,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body
-        className={`${cormorant.variable} ${greatVibes.variable} ${sourceSans.variable} ${loveLight.variable} antialiased`}
+        className={`${cormorant.variable} ${greatVibes.variable} ${sourceSans.variable} ${loveLight.variable} ${playfairDisplay.variable} ${dmSans.variable} antialiased`}
       >
         {children}
       </body>

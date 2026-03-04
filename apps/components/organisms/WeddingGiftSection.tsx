@@ -8,9 +8,10 @@ import { WEDDING_DATA } from "@/constants/wedding-data";
 interface WeddingGiftSectionProps {
   guestId?: string;
   guestName?: string;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
 }
 
-export function WeddingGiftSection({ guestId, guestName = "Guest" }: WeddingGiftSectionProps) {
+export function WeddingGiftSection({ guestName = "Guest", logAction }: WeddingGiftSectionProps) {
   const { bankAccounts } = WEDDING_DATA;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.08 });
   const vis = isVisible ? "is-visible" : "";
@@ -40,8 +41,7 @@ export function WeddingGiftSection({ guestId, guestName = "Guest" }: WeddingGift
                 account={account}
                 isVisible={isVisible}
                 delayIndex={i}
-                guestId={guestId}
-                guestName={guestName}
+                logAction={logAction}
               />
               {i < bankAccounts.length - 1 && (
                 <div className="flex justify-center my-6!">
@@ -60,14 +60,12 @@ function BankCard({
   account,
   isVisible,
   delayIndex,
-  guestId,
-  guestName,
+  logAction,
 }: {
   account: (typeof WEDDING_DATA.bankAccounts)[number];
   isVisible: boolean;
   delayIndex: number;
-  guestId?: string;
-  guestName: string;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -75,21 +73,10 @@ function BankCard({
     try {
       await navigator.clipboard.writeText(account.accountNumber);
       setCopied(true);
-
-      // Log the copy action
-      await fetch("/api/bank-copy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          guestId,
-          guestName,
-          bankName: account.bankName,
-          accountNumber: account.accountNumber,
-        }),
-      }).catch(() => {
-        // Silently fail if logging fails
+      logAction?.("BANK_COPY", {
+        bankName: account.bankName,
+        accountNumber: account.accountNumber,
       });
-
       setTimeout(() => setCopied(false), 2000);
     } catch { /* noop */ }
   };

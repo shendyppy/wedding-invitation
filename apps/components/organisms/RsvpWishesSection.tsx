@@ -8,11 +8,13 @@ import type { RsvpFormData, WishEntry, Wish } from "@/types";
 interface RsvpWishesSectionProps {
   guestToken?: string;
   guestId?: string;
+  guestName?: string;
   maxQuota?: number;
   existingRsvp?: {
     attendanceStatus: "hadir" | "tidak_hadir";
     numberOfAttendees: number;
   } | null;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
 }
 
 function mapDbWishToWishEntry(wish: Wish): WishEntry {
@@ -27,8 +29,10 @@ function mapDbWishToWishEntry(wish: Wish): WishEntry {
 export function RsvpWishesSection({
   guestToken,
   guestId,
+  guestName,
   maxQuota = 2,
   existingRsvp = null,
+  logAction,
 }: RsvpWishesSectionProps) {
   const [wishes, setWishes] = useState<WishEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -105,10 +109,12 @@ export function RsvpWishesSection({
           <RsvpForm
             guestToken={guestToken}
             guestId={guestId}
+            guestName={guestName}
             maxQuota={maxQuota}
             existingRsvp={existingRsvp}
             onSubmit={handleRsvpSubmit}
             onSuccess={handleRsvpSuccess}
+            logAction={logAction}
           />
         </div>
 

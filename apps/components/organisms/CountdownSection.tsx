@@ -6,12 +6,17 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { CountdownTimer } from "@/components/molecules";
 import { WEDDING_DATA } from "@/constants/wedding-data";
 
-export function CountdownSection() {
+interface CountdownSectionProps {
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
+}
+
+export function CountdownSection({ logAction }: CountdownSectionProps) {
   const { weddingDate } = WEDDING_DATA;
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.08 });
   const vis = isVisible ? "is-visible" : "";
 
   const handleSaveTheDate = () => {
+    logAction?.("SAVE_THE_DATE");
     const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("Stevana & Zulfikar Wedding")}&dates=20260411T013000Z/20260411T070000Z&location=${encodeURIComponent("Villa Lagenta Lembang, Jl. Kolonel Masturi No. 8, Kec. Lembang, Kab. Bandung Barat")}`;
     window.open(url, "_blank");
   };

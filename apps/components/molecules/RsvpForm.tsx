@@ -12,6 +12,7 @@ import type { RsvpFormData } from "@/types";
 interface RsvpFormProps {
   guestToken?: string;
   guestId?: string;
+  guestName?: string;
   maxQuota?: number;
   existingRsvp?: {
     attendanceStatus: "hadir" | "tidak_hadir";
@@ -19,6 +20,7 @@ interface RsvpFormProps {
   } | null;
   onSubmit?: (data: RsvpFormData) => void;
   onSuccess?: () => void;
+  logAction?: (actionType: string, metadata?: Record<string, unknown>) => void;
   className?: string;
 }
 
@@ -39,10 +41,12 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 export function RsvpForm({
   guestToken,
   guestId,
+  guestName,
   maxQuota = 2,
   existingRsvp = null,
   onSubmit,
   onSuccess,
+  logAction,
   className = "",
 }: RsvpFormProps) {
   const [formData, setFormData] = useState<RsvpFormData>({
@@ -76,43 +80,50 @@ export function RsvpForm({
     setErrorMessage("");
 
     try {
-      if (!guestToken) {
-        throw new Error("Invalid invitation token");
-      }
-
       const numberOfAttendees = parseInt(formData.guestCount) || 0;
 
-      // Submit RSVP to API
-      const response = await fetch("/api/rsvp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          guestToken,
+      // Submit RSVP only if guest has a valid token
+      if (guestToken) {
+        const response = await fetch("/api/rsvp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            guestToken,
+            attendanceStatus: formData.attendance,
+            numberOfAttendees,
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || "Failed to submit RSVP");
+        }
+
+        logAction?.("SUBMIT_RSVP", {
           attendanceStatus: formData.attendance,
           numberOfAttendees,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to submit RSVP");
+        });
       }
 
       setSubmitState("success");
       onSuccess?.();
 
-      // Also submit wish if message is provided
+      // Submit wish if message is provided (works with or without token)
       if (formData.message.trim()) {
         await fetch("/api/wishes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            guestId,
+            guestId: guestId || undefined,
             name: formData.name,
             message: formData.message,
-            attendanceStatus: formData.attendance,
+            attendanceStatus: formData.attendance || undefined,
           }),
+        });
+
+        logAction?.("SUBMIT_WISH", {
+          name: formData.name,
         });
       }
 

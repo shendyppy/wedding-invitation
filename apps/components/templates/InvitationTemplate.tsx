@@ -21,6 +21,7 @@ import {
   Footer,
 } from "@/components/organisms";
 import { MusicToggle } from "@/components/atoms";
+import { useActionLog } from "@/hooks/useActionLog";
 
 interface InvitationTemplateProps {
   guestName?: string;
@@ -45,6 +46,7 @@ export function InvitationTemplate({
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { logAction } = useActionLog({ guestId, guestName });
 
   // Lock scroll initially
   useEffect(() => {
@@ -74,6 +76,8 @@ export function InvitationTemplate({
 
   const handleOpenInvitation = () => {
     setIsOpen(true);
+    logAction("OPEN_INVITATION");
+
     // Play music immediately — this runs inside a click handler (user gesture)
     if (audioRef.current && !isMusicPlaying) {
       audioRef.current
@@ -110,18 +114,20 @@ export function InvitationTemplate({
           }}
         >
           <CoupleNamesSection />
-          <CountdownSection />
+          <CountdownSection logAction={logAction} />
           <BrideGroomIntroSection />
           <BrideGroomSection />
           <OurStorySection />
-          <EventVenueSection />
+          <EventVenueSection logAction={logAction} />
           <RsvpWishesSection
-guestToken={guestToken}
-guestId={guestId}
-maxQuota={maxQuota}
-existingRsvp={existingRsvp}
-/>
-          <WeddingGiftSection guestId={guestId} guestName={guestName} />
+            guestToken={guestToken}
+            guestId={guestId}
+            guestName={guestName}
+            maxQuota={maxQuota}
+            existingRsvp={existingRsvp}
+            logAction={logAction}
+          />
+          <WeddingGiftSection guestName={guestName} logAction={logAction} />
           <ThankYouSection />
           <Footer />
         </div>
