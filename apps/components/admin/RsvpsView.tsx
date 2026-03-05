@@ -163,80 +163,187 @@ export function RsvpsView({ rsvps }: RsvpsViewProps) {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="admin-fade-in admin-surface rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto admin-scroll">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-admin-border">
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Guest
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Status
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Guests
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Date
-                </th>
+      {/* Table - Desktop */}
+      <div className="hidden md:block admin-fade-in admin-surface rounded-2xl overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-admin-border">
+              <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                Guest
+              </th>
+              <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                Status
+              </th>
+              <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                Guests
+              </th>
+              <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rsvps.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="p-8 text-center text-admin-text-muted"
+                >
+                  No RSVPs submitted yet.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {rsvps.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="p-8 text-center text-admin-text-muted"
-                  >
-                    No RSVPs submitted yet.
+            ) : (
+              paginatedRsvps.map((rsvp) => (
+                <tr
+                  key={rsvp.id}
+                  className="border-b border-admin-border hover:bg-admin-surface-hover/50 transition-colors"
+                >
+                  <td className="p-4">
+                    <div>
+                      <p className="font-medium text-admin-text">
+                        {rsvp.guest.name}
+                      </p>
+                      {rsvp.guest.phone && (
+                        <p className="text-xs text-admin-text-muted mt-1">
+                          {rsvp.guest.phone}
+                        </p>
+                      )}
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(rsvp.attendanceStatus)}
+                      {getStatusBadge(rsvp.attendanceStatus)}
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className="text-sm text-admin-text">
+                      {rsvp.numberOfAttendees}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <span className="text-sm text-admin-text-muted">
+                      {new Date(rsvp.createdAt).toLocaleDateString()}
+                    </span>
                   </td>
                 </tr>
-              ) : (
-                paginatedRsvps.map((rsvp) => (
-                  <tr
-                    key={rsvp.id}
-                    className="border-b border-admin-border hover:bg-admin-surface-hover/50 transition-colors"
-                  >
-                    <td className="p-4">
-                      <div>
-                        <p className="font-medium text-admin-text">
-                          {rsvp.guest.name}
-                        </p>
-                        {rsvp.guest.phone && (
-                          <p className="text-xs text-admin-text-muted mt-1">
-                            {rsvp.guest.phone}
-                          </p>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(rsvp.attendanceStatus)}
-                        {getStatusBadge(rsvp.attendanceStatus)}
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-sm text-admin-text">
-                        {rsvp.numberOfAttendees}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-sm text-admin-text-muted">
-                        {new Date(rsvp.createdAt).toLocaleDateString()}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Pagination Controls */}
-        {rsvps.length > ITEMS_PER_PAGE && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-admin-border">
+      {/* Cards - Mobile */}
+      <div className="md:hidden space-y-3">
+        {rsvps.length === 0 ? (
+          <div className="admin-fade-in admin-surface rounded-2xl p-8 text-center">
+            <Calendar className="w-12 h-12 mx-auto mb-4 text-admin-text-muted opacity-40" />
+            <p className="text-admin-text-muted">No RSVPs submitted yet.</p>
+          </div>
+        ) : (
+          paginatedRsvps.map((rsvp) => (
+            <div
+              key={rsvp.id}
+              className="admin-fade-in admin-surface rounded-xl p-4 space-y-3"
+            >
+              {/* Header: Name + Status */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-admin-text truncate">
+                    {rsvp.guest.name}
+                  </p>
+                  {rsvp.guest.phone && (
+                    <p className="text-xs text-admin-text-muted mt-0.5">
+                      {rsvp.guest.phone}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {getStatusIcon(rsvp.attendanceStatus)}
+                  {getStatusBadge(rsvp.attendanceStatus)}
+                </div>
+              </div>
+
+              {/* Details */}
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-admin-border">
+                <div>
+                  <p className="text-xs text-admin-text-muted">Guests</p>
+                  <p className="text-sm font-medium text-admin-text">
+                    {rsvp.numberOfAttendees}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-admin-text-muted">Date</p>
+                  <p className="text-sm text-admin-text">
+                    {new Date(rsvp.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Pagination */}
+      {rsvps.length > ITEMS_PER_PAGE && (
+        <>
+          {/* Desktop pagination - inside table container */}
+          <div className="hidden md:block admin-surface rounded-t-none rounded-2xl border-t-0 border-admin-border overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-admin-border">
+              <p className="text-xs text-admin-text-muted">
+                Showing {Math.min(startIndex + 1, rsvps.length)} to{" "}
+                {Math.min(endIndex, rsvps.length)} of {rsvps.length} RSVPs
+              </p>
+              <div className="flex items-center gap-1">
+                {/* Prev */}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  className="p-1.5 rounded-lg text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Page numbers */}
+                {getPageNumbers().map((page, i) =>
+                  page === "..." ? (
+                    <span
+                      key={`dots-${i}`}
+                      className="w-8 text-center text-xs text-admin-text-muted"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+                        page === safePage
+                          ? "bg-admin-primary text-white"
+                          : "text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+
+                {/* Next */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={safePage === totalPages}
+                  className="p-1.5 rounded-lg text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile pagination */}
+          <div className="md:hidden flex flex-col items-center gap-3 py-4">
             <p className="text-xs text-admin-text-muted">
               Showing {Math.min(startIndex + 1, rsvps.length)} to{" "}
               {Math.min(endIndex, rsvps.length)} of {rsvps.length} RSVPs
@@ -287,8 +394,8 @@ export function RsvpsView({ rsvps }: RsvpsViewProps) {
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 }
