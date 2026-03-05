@@ -15,10 +15,14 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { Badge } from "./ui";
 import { Input } from "./ui";
 import { Button } from "./ui";
+import { GuestFormModal, type GuestFormData } from "./GuestFormModal";
+import { ConfirmDialog } from "./ui/modal";
 
 export interface Guest {
   id: string;
@@ -38,7 +42,9 @@ export interface Guest {
 
 interface GuestsViewProps {
   guests: Guest[];
-  onCreateGuest: () => void;
+  onCreateGuest: (data: GuestFormData) => Promise<void>;
+  onEditGuest: (data: GuestFormData) => Promise<void>;
+  onDeleteGuest: (id: string) => Promise<void>;
   onCopyLink: (token: string) => void;
 }
 
@@ -47,11 +53,20 @@ const PAGE_SIZE = 10;
 export function GuestsView({
   guests,
   onCreateGuest,
+  onEditGuest,
+  onDeleteGuest,
   onCopyLink,
 }: GuestsViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Modal states
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [editingGuest, setEditingGuest] = useState<GuestFormData | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingGuest, setDeletingGuest] = useState<Guest | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const filteredGuests = guests.filter(
     (guest) =>
@@ -102,6 +117,49 @@ export function GuestsView({
     setTimeout(() => setCopiedToken(null), 2000);
   };
 
+  // --- Modal handlers ---
+  const handleOpenAddModal = () => {
+    setEditingGuest(null);
+    setFormModalOpen(true);
+  };
+
+  const handleOpenEditModal = (guest: Guest) => {
+    setEditingGuest({
+      id: guest.id,
+      name: guest.name,
+      phone: guest.phone || "",
+      maxQuota: guest.maxQuota,
+    });
+    setFormModalOpen(true);
+  };
+
+  const handleFormSubmit = async (data: GuestFormData) => {
+    if (data.id) {
+      await onEditGuest(data);
+    } else {
+      await onCreateGuest(data);
+    }
+  };
+
+  const handleOpenDeleteDialog = (guest: Guest) => {
+    setDeletingGuest(guest);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingGuest) return;
+    setDeleteLoading(true);
+    try {
+      await onDeleteGuest(deletingGuest.id);
+      setDeleteDialogOpen(false);
+      setDeletingGuest(null);
+    } catch {
+      // Error handling is done at parent level via toast
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   // Generate page numbers to show
   const getPageNumbers = (): (number | "...")[] => {
     if (totalPages <= 5) {
@@ -127,221 +185,275 @@ export function GuestsView({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-admin-text font-display">
-            Guests
-          </h2>
-          <p className="text-sm text-admin-text-muted">
-            {guests.length} total guests
-            {searchQuery && ` · ${filteredGuests.length} found`}
-          </p>
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-admin-text font-display">
+              Guests
+            </h2>
+            <p className="text-sm text-admin-text-muted">
+              {guests.length} total guests
+              {searchQuery && ` · ${filteredGuests.length} found`}
+            </p>
+          </div>
+          <Button onClick={handleOpenAddModal} className="gap-2">
+            <UserPlus className="w-4 h-4" />
+            Add Guest
+          </Button>
         </div>
-        <Button onClick={onCreateGuest} className="gap-2">
-          <UserPlus className="w-4 h-4" />
-          Add Guest
-        </Button>
-      </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-admin-text-muted" />
-        <Input
-          type="search"
-          placeholder="Search guests by name or phone..."
-          className="pl-10"
-          value={searchQuery}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
-      </div>
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-admin-text-muted" />
+          <Input
+            type="search"
+            placeholder="Search guests by name or phone..."
+            className="pl-10"
+            value={searchQuery}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
 
-      {/* Table */}
-      <div className="admin-fade-in admin-surface rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto admin-scroll">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-admin-border">
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Guest
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Contact
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Quota
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  Status
-                </th>
-                <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
-                  RSVP
-                </th>
-                <th className="text-right p-4 font-medium text-sm text-admin-text-muted">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedGuests.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="p-8 text-center text-admin-text-muted"
-                  >
-                    {searchQuery
-                      ? "No guests found matching your search."
-                      : "No guests yet. Create your first guest!"}
-                  </td>
+        {/* Table */}
+        <div className="admin-fade-in admin-surface rounded-2xl overflow-hidden">
+          <div className="overflow-x-auto admin-scroll">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-admin-border">
+                  <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                    Guest
+                  </th>
+                  <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                    Contact
+                  </th>
+                  <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                    Quota
+                  </th>
+                  <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                    Status
+                  </th>
+                  <th className="text-left p-4 font-medium text-sm text-admin-text-muted">
+                    RSVP
+                  </th>
+                  <th className="text-right p-4 font-medium text-sm text-admin-text-muted">
+                    Actions
+                  </th>
                 </tr>
-              ) : (
-                paginatedGuests.map((guest) => (
-                  <tr
-                    key={guest.id}
-                    className="border-b border-admin-border hover:bg-admin-surface-hover/50 transition-colors"
-                  >
-                    <td className="p-4">
-                      <div>
-                        <p className="font-medium text-admin-text">
-                          {guest.name}
-                        </p>
-                        <p className="text-xs text-admin-text-muted mt-1">
-                          Created{" "}
-                          {new Date(guest.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      {guest.phone ? (
-                        <p className="text-sm text-admin-text-muted">
-                          {guest.phone}
-                        </p>
-                      ) : (
-                        <span className="text-sm text-admin-text-muted">—</span>
-                      )}
-                    </td>
-                    <td className="p-4">
-                      <span className="text-sm font-medium text-admin-text">
-                        {guest.rsvp?.attendanceStatus === "ATTENDING"
-                          ? `${guest.rsvp.numberOfAttendees} / ${guest.maxQuota}`
-                          : guest.maxQuota}
-                      </span>
-                    </td>
-                    <td className="p-4">{getStatusBadge(guest)}</td>
-                    <td className="p-4">
-                      {guest.rsvp ? (
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1 text-sm">
-                            {guest.rsvp.attendanceStatus === "ATTENDING" ? (
-                              <Check className="w-3 h-3 text-emerald-500" />
-                            ) : (
-                              <X className="w-3 h-3 text-admin-text-muted" />
-                            )}
-                            <span className="text-admin-text">
-                              {guest.rsvp.attendanceStatus === "ATTENDING"
-                                ? "Attending"
-                                : "Not Attending"}
-                            </span>
-                          </div>
-                          {guest.rsvp.attendanceStatus === "ATTENDING" && (
-                            <p className="text-xs text-admin-text-muted">
-                              {guest.rsvp.numberOfAttendees} guest
-                              {guest.rsvp.numberOfAttendees > 1 ? "s" : ""}
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-sm text-admin-text-muted">—</span>
-                      )}
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center justify-end gap-2">
-                        {guest.isOpened && (
-                          <span className="text-xs text-admin-text-muted flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
-                            Opened
-                          </span>
-                        )}
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => copyInviteLink(guest.uniqueToken)}
-                          className="h-8 w-8"
-                          title="Copy invitation link"
-                        >
-                          {copiedToken === guest.uniqueToken ? (
-                            <Check className="w-4 h-4 text-emerald-500" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </div>
+              </thead>
+              <tbody>
+                {paginatedGuests.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="p-8 text-center text-admin-text-muted"
+                    >
+                      {searchQuery
+                        ? "No guests found matching your search."
+                        : "No guests yet. Create your first guest!"}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        {filteredGuests.length > PAGE_SIZE && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-admin-border">
-            <p className="text-xs text-admin-text-muted">
-              Showing {startIdx + 1}–
-              {Math.min(startIdx + PAGE_SIZE, filteredGuests.length)} of{" "}
-              {filteredGuests.length} guests
-            </p>
-
-            <div className="flex items-center gap-1">
-              {/* Prev */}
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={safePage === 1}
-                className="p-1.5 rounded-lg text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              {/* Page numbers */}
-              {getPageNumbers().map((page, i) =>
-                page === "..." ? (
-                  <span
-                    key={`dots-${i}`}
-                    className="w-8 text-center text-xs text-admin-text-muted"
-                  >
-                    ...
-                  </span>
                 ) : (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
-                      page === safePage
-                        ? "bg-admin-primary text-white"
-                        : "text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
-
-              {/* Next */}
-              <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={safePage === totalPages}
-                className="p-1.5 rounded-lg text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+                  paginatedGuests.map((guest) => (
+                    <tr
+                      key={guest.id}
+                      className="border-b border-admin-border hover:bg-admin-surface-hover/50 transition-colors"
+                    >
+                      <td className="p-4">
+                        <div>
+                          <p className="font-medium text-admin-text">
+                            {guest.name}
+                          </p>
+                          <p className="text-xs text-admin-text-muted mt-1">
+                            Created{" "}
+                            {new Date(guest.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        {guest.phone ? (
+                          <p className="text-sm text-admin-text-muted">
+                            {guest.phone}
+                          </p>
+                        ) : (
+                          <span className="text-sm text-admin-text-muted">
+                            —
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <span className="text-sm font-medium text-admin-text">
+                          {guest.rsvp?.attendanceStatus === "ATTENDING"
+                            ? `${guest.rsvp.numberOfAttendees} / ${guest.maxQuota}`
+                            : guest.maxQuota}
+                        </span>
+                      </td>
+                      <td className="p-4">{getStatusBadge(guest)}</td>
+                      <td className="p-4">
+                        {guest.rsvp ? (
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1 text-sm">
+                              {guest.rsvp.attendanceStatus === "ATTENDING" ? (
+                                <Check className="w-3 h-3 text-emerald-500" />
+                              ) : (
+                                <X className="w-3 h-3 text-admin-text-muted" />
+                              )}
+                              <span className="text-admin-text">
+                                {guest.rsvp.attendanceStatus === "ATTENDING"
+                                  ? "Attending"
+                                  : "Not Attending"}
+                              </span>
+                            </div>
+                            {guest.rsvp.attendanceStatus === "ATTENDING" && (
+                              <p className="text-xs text-admin-text-muted">
+                                {guest.rsvp.numberOfAttendees} guest
+                                {guest.rsvp.numberOfAttendees > 1 ? "s" : ""}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-admin-text-muted">
+                            —
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-end gap-1">
+                          {guest.isOpened && (
+                            <span className="text-xs text-admin-text-muted flex items-center gap-1 mr-1">
+                              <Eye className="w-3 h-3" />
+                              Opened
+                            </span>
+                          )}
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => copyInviteLink(guest.uniqueToken)}
+                            className="h-8 w-8"
+                            title="Copy invitation link"
+                          >
+                            {copiedToken === guest.uniqueToken ? (
+                              <Check className="w-4 h-4 text-emerald-500" />
+                            ) : (
+                              <Copy className="w-4 h-4" />
+                            )}
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => handleOpenEditModal(guest)}
+                            className="h-8 w-8"
+                            title="Edit guest"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => handleOpenDeleteDialog(guest)}
+                            className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
+                            title="Delete guest"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
+
+          {/* Pagination */}
+          {filteredGuests.length > PAGE_SIZE && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-admin-border">
+              <p className="text-xs text-admin-text-muted">
+                Showing {startIdx + 1}–
+                {Math.min(startIdx + PAGE_SIZE, filteredGuests.length)} of{" "}
+                {filteredGuests.length} guests
+              </p>
+
+              <div className="flex items-center gap-1">
+                {/* Prev */}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  className="p-1.5 rounded-lg text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                {/* Page numbers */}
+                {getPageNumbers().map((page, i) =>
+                  page === "..." ? (
+                    <span
+                      key={`dots-${i}`}
+                      className="w-8 text-center text-xs text-admin-text-muted"
+                    >
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
+                        page === safePage
+                          ? "bg-admin-primary text-white"
+                          : "text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+
+                {/* Next */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={safePage === totalPages}
+                  className="p-1.5 rounded-lg text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Guest Form Modal (Add / Edit) */}
+      <GuestFormModal
+        open={formModalOpen}
+        onClose={() => {
+          setFormModalOpen(false);
+          setEditingGuest(null);
+        }}
+        onSubmit={handleFormSubmit}
+        guest={editingGuest}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setDeletingGuest(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Guest"
+        description={
+          deletingGuest
+            ? `Are you sure you want to delete "${deletingGuest.name}"? This will also remove their RSVP and wishes. This action cannot be undone.`
+            : ""
+        }
+        confirmLabel="Delete"
+        variant="destructive"
+        loading={deleteLoading}
+      />
+    </>
   );
 }

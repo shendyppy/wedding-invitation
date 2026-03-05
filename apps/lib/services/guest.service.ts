@@ -19,7 +19,7 @@ export type ApiResponse<T> = {
  * Fetch guest by unique token
  */
 export async function getGuestByToken(
-  token: string
+  token: string,
 ): Promise<ApiResponse<GuestWithRsvp>> {
   try {
     const guest = await prisma.guest.findUnique({
@@ -35,8 +35,7 @@ export async function getGuestByToken(
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch guest",
+      error: error instanceof Error ? error.message : "Failed to fetch guest",
     };
   }
 }
@@ -45,7 +44,7 @@ export async function getGuestByToken(
  * Mark invitation as opened
  */
 export async function markInvitationOpened(
-  token: string
+  token: string,
 ): Promise<ApiResponse<void>> {
   try {
     await prisma.guest.update({
@@ -57,8 +56,7 @@ export async function markInvitationOpened(
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to update guest",
+      error: error instanceof Error ? error.message : "Failed to update guest",
     };
   }
 }
@@ -67,7 +65,7 @@ export async function markInvitationOpened(
  * Mark RSVP as submitted for a guest
  */
 export async function markRsvpSubmitted(
-  guestId: string
+  guestId: string,
 ): Promise<ApiResponse<void>> {
   try {
     await prisma.guest.update({
@@ -82,8 +80,7 @@ export async function markRsvpSubmitted(
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to update guest",
+      error: error instanceof Error ? error.message : "Failed to update guest",
     };
   }
 }
@@ -121,8 +118,7 @@ export async function getGuestStats(): Promise<
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch stats",
+      error: error instanceof Error ? error.message : "Failed to fetch stats",
     };
   }
 }
@@ -141,8 +137,7 @@ export async function getAllGuests(): Promise<ApiResponse<GuestWithRsvp[]>> {
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch guests",
+      error: error instanceof Error ? error.message : "Failed to fetch guests",
     };
   }
 }
@@ -150,14 +145,12 @@ export async function getAllGuests(): Promise<ApiResponse<GuestWithRsvp[]>> {
 /**
  * Create a new guest (admin only)
  */
-export async function createGuest(
-  guest: {
-    name: string;
-    phone: string | null;
-    maxQuota: number;
-    uniqueToken: string;
-  }
-): Promise<ApiResponse<Guest>> {
+export async function createGuest(guest: {
+  name: string;
+  phone: string | null;
+  maxQuota: number;
+  uniqueToken: string;
+}): Promise<ApiResponse<Guest>> {
   try {
     const newGuest = await prisma.guest.create({
       data: {
@@ -175,8 +168,55 @@ export async function createGuest(
   } catch (error) {
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to create guest",
+      error: error instanceof Error ? error.message : "Failed to create guest",
+    };
+  }
+}
+
+/**
+ * Update a guest (admin only)
+ */
+export async function updateGuest(
+  id: string,
+  data: {
+    name?: string;
+    phone?: string | null;
+    maxQuota?: number;
+  },
+): Promise<ApiResponse<Guest>> {
+  try {
+    const updatedGuest = await prisma.guest.update({
+      where: { id },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.phone !== undefined && { phone: data.phone }),
+        ...(data.maxQuota !== undefined && { maxQuota: data.maxQuota }),
+      },
+    });
+
+    return { success: true, data: updatedGuest };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update guest",
+    };
+  }
+}
+
+/**
+ * Delete a guest (admin only)
+ */
+export async function deleteGuest(id: string): Promise<ApiResponse<void>> {
+  try {
+    await prisma.guest.delete({
+      where: { id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to delete guest",
     };
   }
 }
