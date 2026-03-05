@@ -4,6 +4,7 @@
 // ============================================================
 
 import { Avatar, Typography } from "@/components/atoms";
+import { CheckCircle2, XCircle } from "lucide-react";
 import type { WishEntry } from "@/types";
 
 interface WishCardProps {
@@ -34,13 +35,16 @@ export function WishCard({ wish, className = "" }: WishCardProps) {
             {name}
           </Typography>
           {attendance && (
-            <Typography
-              variant="caption"
-              as="span"
-              className="text-[var(--color-olive)] text-[10px] sm:text-xs"
+            <div
+              className="flex items-center self-center"
+              title={STATUS_LABEL[attendance] ?? attendance}
             >
-              {STATUS_LABEL[attendance] ?? attendance}
-            </Typography>
+              {attendance === "hadir" ? (
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600/90" />
+              ) : attendance === "tidak_hadir" ? (
+                <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600/90" />
+              ) : null}
+            </div>
           )}
         </div>
         {message && (
