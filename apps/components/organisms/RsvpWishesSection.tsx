@@ -30,7 +30,7 @@ export function RsvpWishesSection({
   guestToken,
   guestId,
   guestName,
-  maxQuota = 2,
+  maxQuota = 4,
   existingRsvp = null,
   logAction,
 }: RsvpWishesSectionProps) {
@@ -123,7 +123,7 @@ export function RsvpWishesSection({
           className={`anim-fade-in ${vis} anim-delay-300 flex items-center gap-3`}
         >
           <div className="h-px flex-1 bg-white/20" />
-          <span className="text-white/40 text-[10px] tracking-widest uppercase font-sans shrink-0">
+          <span className="text-white/40 text-[10px] tracking-widest uppercase font-serif shrink-0">
             Messages
           </span>
           <div className="h-px flex-1 bg-white/20" />

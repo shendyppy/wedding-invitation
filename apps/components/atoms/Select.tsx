@@ -23,6 +23,7 @@ interface SelectProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   required?: boolean;
   disabled?: boolean;
   name?: string;
+  buttonClassName?: string;
 }
 
 export function Select({
@@ -35,6 +36,7 @@ export function Select({
   required,
   disabled,
   name,
+  buttonClassName = "",
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -114,7 +116,7 @@ export function Select({
           w-full flex items-center justify-between
           px-5 py-3.5
           bg-[var(--color-soft-beige)] text-left
-          border rounded-xl font-sans text-sm
+          border rounded-xl font-serif text-sm
           outline-none cursor-pointer
           transition-all duration-300
           disabled:opacity-50 disabled:cursor-not-allowed
@@ -126,6 +128,7 @@ export function Select({
             ? "text-[var(--color-dark-olive)]"
             : "text-[var(--color-warm-gray)]"
           }
+          ${buttonClassName}
         `}
       >
         <span className="truncate">
@@ -172,7 +175,7 @@ export function Select({
                 onClick={() => handleSelect(option.value)}
                 className={`
                   w-full flex items-center gap-3
-                  px-5 py-3 text-left text-sm font-sans
+                  px-5 py-3 text-left text-sm font-serif
                   transition-colors duration-150
                   ${isSelected
                     ? "bg-[var(--color-olive)]/10 text-[var(--color-olive)] font-medium"

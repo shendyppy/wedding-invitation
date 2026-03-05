@@ -28,7 +28,7 @@ export function CountdownTimer({
 
   return (
     <div
-      className={`flex items-center justify-center gap-2 sm:gap-4 md:gap-6 ${className}`.trim()}
+      className={`flex items-center justify-center gap-6 sm:gap-8 md:gap-10 ${className}`.trim()}
     >
       {units.map((unit) => (
         <CountdownUnit key={unit.label} value={unit.value} label={unit.label} />

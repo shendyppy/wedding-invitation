@@ -12,16 +12,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "admin-gradient text-white shadow-lg hover:opacity-90",
+        default: "bg-[var(--color-olive)] text-white shadow-lg hover:bg-[var(--color-dark-olive)]",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-red-400 text-white hover:bg-red-500",
         outline:
-          "border border-admin-border bg-transparent text-admin-text hover:bg-admin-surface-hover",
+          "border border-[var(--color-warm-gray)]/30 bg-transparent text-[var(--color-dark-olive)] hover:bg-[var(--color-soft-beige)]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-[var(--color-warm-gray)]/20 text-[var(--color-dark-olive)] hover:bg-[var(--color-warm-gray)]/30",
         ghost:
-          "text-admin-text-muted hover:bg-admin-surface-hover hover:text-admin-text",
-        link: "text-primary underline-offset-4 hover:underline",
+          "text-[var(--color-warm-gray)] hover:bg-[var(--color-soft-beige)] hover:text-[var(--color-dark-olive)]",
+        link: "text-[var(--color-olive)] underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",

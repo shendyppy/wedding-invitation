@@ -9,7 +9,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
-export function Input({ label, className = "", id, ...props }: InputProps) {
+export function Input({ label, className = "", id, readOnly, ...props }: InputProps) {
   const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
 
   return (
@@ -21,7 +21,8 @@ export function Input({ label, className = "", id, ...props }: InputProps) {
       )}
       <input
         id={inputId}
-        className={`w-full px-5! py-3.5! bg-[var(--color-soft-beige)]! text-[var(--color-dark-olive)] placeholder:text-[var(--color-warm-gray)] border border-[var(--color-warm-gray)]/20 rounded-xl! font-sans text-sm outline-none focus:border-[var(--color-olive)] transition-all duration-300 ${className}`.trim()}
+        readOnly={readOnly}
+        className={`w-full px-5! py-3.5! bg-[var(--color-soft-beige)]! text-[var(--color-dark-olive)] placeholder:text-[var(--color-warm-gray)] border border-[var(--color-warm-gray)]/20 rounded-xl! font-serif text-sm outline-none focus:border-[var(--color-olive)] transition-all duration-300 ${readOnly ? "cursor-not-allowed opacity-70" : ""} ${className}`.trim()}
         {...props}
       />
     </div>

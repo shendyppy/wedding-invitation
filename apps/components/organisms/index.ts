@@ -12,4 +12,3 @@ export { EventVenueSection } from "./EventVenueSection";
 export { RsvpWishesSection } from "./RsvpWishesSection";
 export { WeddingGiftSection } from "./WeddingGiftSection";
 export { ThankYouSection } from "./ThankYouSection";
-export { Footer } from "./Footer";

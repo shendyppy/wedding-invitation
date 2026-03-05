@@ -37,7 +37,7 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
           {heroQuote.map((line, i) => (
             <p
               key={i}
-              className="font-serif italic text-white/90 text-[11px] sm:text-sm leading-relaxed"
+              className="font-serif text-white/90 text-xs sm:text-sm leading-relaxed"
             >
               {line}
             </p>
@@ -74,7 +74,10 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
 
         {guestName && (
           <div className="hero-animate hero-animate-delay-3">
-            <p className="text-white/75 tracking-widest uppercase font-sans text-xs">
+            <p
+              className="text-white/90 tracking-widest uppercase font-sans text-sm"
+              style={{ fontFamily: "var(--font-hero)" }}
+            >
               Dear {guestName},
             </p>
           </div>

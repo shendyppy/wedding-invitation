@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { WEDDING_DATA } from "@/constants/wedding-data";
+import { Copy, Check } from "lucide-react";
 
 interface WeddingGiftSectionProps {
   guestId?: string;
@@ -31,7 +32,7 @@ export function WeddingGiftSection({ guestName = "Guest", logAction }: WeddingGi
             Wedding Gift
           </h2>
 
-          <p className={`anim-fade-up ${vis} anim-delay-100 font-serif font-semibold text-[var(--color-warm-gray)] text-sm text-center leading-relaxed mb-10`}>
+          <p className={`anim-fade-up ${vis} anim-delay-100 font-serif font-normal text-[var(--color-warm-gray)] text-sm text-center leading-relaxed mb-10`}>
             Your presence at our wedding is the greatest gift of all. However, if you wish to bless us with a token of love, you may find our details below.
           </p>
 
@@ -85,16 +86,16 @@ function BankCard({
 
   return (
     <div
-      className={`anim-fade-up ${isVisible ? "is-visible" : ""} ${delayClass} flex flex-col items-center text-center py-3! gap-3`}
+      className={`anim-fade-up ${isVisible ? "is-visible" : ""} ${delayClass} flex flex-col items-center text-center py-3! gap-3!`}
     >
       <div className="relative w-[140px] h-[90px] sm:w-[160px] sm:h-[100px]">
         <Image src={account.bankLogoSrc} alt={`Logo ${account.bankName}`} fill className="object-contain" sizes="(max-width: 400px) 140px, 160px" quality={98} unoptimized />
       </div>
-      <p className="font-serif font-bold text-[var(--color-olive)] tracking-widest text-2xl">{account.accountNumber}</p>
-      <p className="font-sans text-[var(--color-warm-gray)] text-sm">A/N {account.accountHolder}</p>
+      <p className="font-sans font-bold text-[var(--color-olive)] tracking-widest text-2xl">{account.accountNumber}</p>
+      <p className="font-serif text-[var(--color-warm-gray)] text-sm">A/N {account.accountHolder}</p>
       <button
         onClick={handleCopy}
-        className={`btn-base mt-2 transition-all ${
+        className={`btn-base mt-2 transition-all font-serif ${
           copied
             ? "bg-green-600 text-white"
             : "btn-olive"
@@ -102,9 +103,7 @@ function BankCard({
       >
         {copied ? (
           <span className="flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+            <Check className="w-4 h-4" />
             Tersalin!
           </span>
         ) : (

@@ -45,7 +45,7 @@ export function CountdownSection({ logAction }: CountdownSectionProps) {
         <div />
 
         <p
-          className={`anim-fade-up ${vis} font-serif italic text-[var(--color-warm-gray)] text-lg`}
+          className={`anim-fade-up ${vis} font-serif text-[var(--color-warm-gray)] text-lg`}
         >
           Are getting married!
         </p>
@@ -62,7 +62,7 @@ export function CountdownSection({ logAction }: CountdownSectionProps) {
         />
 
         <p
-          className={`anim-fade-up ${vis} anim-delay-200 font-serif italic text-[var(--color-warm-gray)] text-lg`}
+          className={`anim-fade-up ${vis} anim-delay-200 font-serif text-[var(--color-warm-gray)] text-lg`}
         >
           Counting down
           <span className="animated-dots">
@@ -77,7 +77,7 @@ export function CountdownSection({ logAction }: CountdownSectionProps) {
         </div>
 
         <div className={`anim-fade-up ${vis} anim-delay-400`}>
-          <button onClick={handleSaveTheDate} className="btn-base btn-olive">
+          <button onClick={handleSaveTheDate} className="btn-base btn-olive font-serif">
             <CalendarHeart size={16} />
             Save The Date!
           </button>
