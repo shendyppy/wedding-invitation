@@ -17,7 +17,7 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
   return (
     <section
       id="hero"
-      className="invitation-section relative w-full flex flex-col items-center justify-start text-center text-white overflow-hidden pt-24!"
+      className="invitation-section relative w-full flex flex-col items-center justify-start text-center text-white overflow-hidden pt-16!"
     >
       <div className="absolute inset-0 right-0 z-0">
         <Image
@@ -46,19 +46,19 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
 
         <div className="hero-animate hero-animate-delay-2 flex flex-col items-center mt-2">
           <span
-            className="text-white leading-none text-[clamp(3rem,15vw,4.5rem)]"
+            className="text-white leading-none text-[clamp(2rem,12vw,3rem)]"
             style={{ fontFamily: "var(--font-script)" }}
           >
             {bride.fullName.split(" ")[0]}
           </span>
           <span
-            className="text-white/70 -mt-2 text-[clamp(1.8rem,8vw,2.8rem)]"
+            className="text-white/70 -mt-2 text-[clamp(1rem,6vw,1.5rem)]"
             style={{ fontFamily: "var(--font-script)" }}
           >
             &amp;
           </span>
           <span
-            className="text-white leading-none -mt-2 text-[clamp(3rem,15vw,4.5rem)]"
+            className="text-white leading-none -mt-2 text-[clamp(2rem,12vw,3rem)]"
             style={{ fontFamily: "var(--font-script)" }}
           >
             {groom.fullName.split(" ").pop()}
@@ -67,7 +67,7 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
 
         <p
           style={{ fontFamily: "var(--font-hero)" }}
-          className="hero-animate hero-animate-delay-3 text-white/90 text-[clamp(1rem,4.5vw,1.4rem)] tracking-[0.25em]"
+          className="hero-animate hero-animate-delay-3 text-white/90 text-[clamp(0.5rem,3vw,1rem)] tracking-[0.25em]"
         >
           11 · 04 · 26
         </p>
@@ -76,7 +76,7 @@ export function HeroSection({ guestName, onOpenInvitation }: HeroSectionProps) {
           <div className="hero-animate hero-animate-delay-3">
             <p
               className="text-white/90 tracking-widest uppercase font-sans text-sm"
-              style={{ fontFamily: "var(--font-hero)" }}
+              style={{ fontFamily: "var(--font-serif)" }}
             >
               Dear {guestName},
             </p>

@@ -38,10 +38,10 @@ export function EventVenueSection({ logAction }: EventVenueSectionProps) {
         className="relative z-10 flex flex-col items-center justify-start flex-1 p-6!"
       >
         <div
-          className={`anim-scale-in ${vis} w-full max-w-md border-2 border-black rounded-2xl px-6! py-10! space-y-6 backdrop-blur-sm shadow-sm flex flex-col items-center`}
+          className={`anim-scale-in ${vis} w-full max-w-md border-2 border-black rounded-2xl px-4! py-6! space-y-6 backdrop-blur-sm shadow-sm flex flex-col items-center`}
         >
           <p
-            className={`anim-fade-up ${vis} font-serif font-bold text-lg sm:text-xl tracking-[0.2em] sm:tracking-[0.3em] uppercase text-[var(--color-warm-gray)] text-center`}
+            className={`anim-fade-up ${vis} font-serif font-bold text-base sm:text-lg tracking-[0.2em] sm:tracking-[0.3em] uppercase text-[var(--color-warm-gray)] text-center`}
           >
             Event &amp; Venue
           </p>
@@ -52,20 +52,20 @@ export function EventVenueSection({ logAction }: EventVenueSectionProps) {
             <p className="font-serif font-semibold text-[var(--color-dark-olive)] tracking-[0.15em] sm:tracking-[0.18em] uppercase text-xl sm:text-2xl">
               Saturday
             </p>
-            <p className="font-serif font-bold text-[var(--color-olive)] leading-none my-1 text-[clamp(4rem,20vw,6rem)]">
+            <p className="font-sans font-bold text-[var(--color-olive)] leading-none my-1 text-[clamp(2rem,15vw,4rem)]">
               11
             </p>
-            <p className="font-serif font-bold text-[var(--color-dark-olive)] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-2xl sm:text-3xl">
+            <p className="font-serif font-bold text-[var(--color-dark-olive)] tracking-[0.25em] sm:tracking-[0.3em] uppercase text-xl sm:text-2xl">
               April
             </p>
-            <p className="font-sans font-bold text-[var(--color-warm-gray)] tracking-[0.15em] sm:tracking-[0.2em] text-xl sm:text-2xl mt-1">
+            <p className="font-sans font-bold text-[var(--color-warm-gray)] tracking-[0.15em] sm:tracking-[0.2em] text-lg sm:text-xl mt-1">
               2026
             </p>
           </div>
 
           {/* Schedule grid — equal columns with centered divider */}
           <div
-            className={`anim-fade-up ${vis} anim-delay-200 w-full py-6!`}
+            className={`anim-fade-up ${vis} anim-delay-200 w-full`}
             style={{
               display: "grid",
               gridTemplateColumns: "1fr auto 1fr",
@@ -80,16 +80,16 @@ export function EventVenueSection({ logAction }: EventVenueSectionProps) {
                 <div key={item.name} className="contents">
                   {/* Left/Right column content */}
                   <div className="flex flex-col items-center text-center gap-1 px-1 sm:px-2">
-                    <p className="font-sans text-base tracking-[0.2em] uppercase text-[var(--color-warm-gray)] font-semibold font-serif">
+                    <p className="font-sans text-xs tracking-[0.2em] uppercase text-[var(--color-warm-gray)] font-semibold font-serif">
                       {item.name}
                     </p>
-                    <p className="font-serif font-semibold text-[var(--color-dark-olive)] text-xl">
+                    <p className="font-sans font-semibold text-[var(--color-dark-olive)] text-lg">
                       {item.startTime}
                     </p>
                     <p className="font-sans text-[var(--color-warm-gray)] text-sm">
                       —
                     </p>
-                    <p className="font-serif font-semibold text-[var(--color-dark-olive)] text-xl">
+                    <p className="font-sans font-semibold text-[var(--color-dark-olive)] text-lg">
                       {item.endTime}
                     </p>
                   </div>

@@ -13,6 +13,9 @@ export type { Guest } from "./GuestsView";
 
 export { CreateGuestView } from "./CreateGuestView";
 
+export { GuestFormModal } from "./GuestFormModal";
+export type { GuestFormData } from "./GuestFormModal";
+
 export { RsvpsView } from "./RsvpsView";
 export type { RsvpData } from "./RsvpsView";
 
@@ -26,6 +29,7 @@ export { BulkImportView } from "./BulkImportView";
 
 // UI components
 export * from "./ui";
+export { Modal, ConfirmDialog } from "./ui/modal";
 
 // Hooks
 export { useToast, Toaster } from "@/hooks/admin";

@@ -10,7 +10,6 @@ import {
   AdminSidebar,
   DashboardView,
   GuestsView,
-  CreateGuestView,
   RsvpsView,
   WishesView,
   ActionLogsView,
@@ -20,6 +19,7 @@ import {
 } from "@/components/admin";
 import type { AdminView } from "@/components/admin";
 import type { ActionLogData, ActionStats } from "@/components/admin";
+import type { GuestFormData } from "@/components/admin";
 import { Menu, Lock } from "lucide-react";
 
 interface GuestStats {
@@ -359,6 +359,80 @@ export default function AdminPage() {
     });
   };
 
+  // ---- Guest CRUD handlers ----
+
+  const handleCreateGuest = async (data: GuestFormData) => {
+    const res = await authFetch("/api/admin/guests", {
+      method: "POST",
+      body: JSON.stringify({
+        name: data.name,
+        phone: data.phone || null,
+        maxQuota: data.maxQuota,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to create guest");
+    }
+
+    // Refresh data
+    await fetchAllData();
+    toast({
+      title: "Guest Created",
+      message: `${data.name} has been added successfully`,
+      variant: "success",
+    });
+  };
+
+  const handleEditGuest = async (data: GuestFormData) => {
+    if (!data.id) return;
+
+    const res = await authFetch(`/api/admin/guests/${data.id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        name: data.name,
+        phone: data.phone || null,
+        maxQuota: data.maxQuota,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to update guest");
+    }
+
+    // Refresh data
+    await fetchAllData();
+    toast({
+      title: "Guest Updated",
+      message: `${data.name} has been updated successfully`,
+      variant: "success",
+    });
+  };
+
+  const handleDeleteGuest = async (id: string) => {
+    const res = await authFetch(`/api/admin/guests/${id}`, {
+      method: "DELETE",
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to delete guest");
+    }
+
+    // Refresh data
+    await fetchAllData();
+    toast({
+      title: "Guest Deleted",
+      message: "Guest has been removed successfully",
+      variant: "success",
+    });
+  };
+
   // Login screen
   if (!isAuthenticated) {
     return (
@@ -457,7 +531,9 @@ export default function AdminPage() {
                 {currentView === "guests" && (
                   <GuestsView
                     guests={guests}
-                    onCreateGuest={() => setCurrentView("create-guest")}
+                    onCreateGuest={handleCreateGuest}
+                    onEditGuest={handleEditGuest}
+                    onDeleteGuest={handleDeleteGuest}
                     onCopyLink={handleCopyLink}
                   />
                 )}
@@ -481,21 +557,6 @@ export default function AdminPage() {
                       toast({
                         title: "Import Complete",
                         message: "Guest list imported successfully",
-                        variant: "success",
-                      });
-                    }}
-                    authToken={getAuthToken()}
-                  />
-                )}
-
-                {currentView === "create-guest" && (
-                  <CreateGuestView
-                    onBack={() => setCurrentView("guests")}
-                    onGuestCreated={() => {
-                      fetchAllData();
-                      toast({
-                        title: "Guest Created",
-                        message: "New guest added successfully",
                         variant: "success",
                       });
                     }}
