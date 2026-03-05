@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   AdminSidebar,
   DashboardView,
@@ -20,7 +20,7 @@ import {
 } from "@/components/admin";
 import type { AdminView } from "@/components/admin";
 import type { ActionLogData, ActionStats } from "@/components/admin";
-import { Menu } from "lucide-react";
+import { Menu, Lock } from "lucide-react";
 
 interface GuestStats {
   total: number;
@@ -30,10 +30,78 @@ interface GuestStats {
   withoutRsvp: number;
 }
 
+interface Guest {
+  id: string;
+  name: string;
+  phone?: string;
+  maxQuota: number;
+  uniqueToken: string;
+  isOpened: boolean;
+  rsvpSubmitted: boolean;
+  createdAt: string;
+}
+
+interface Rsvp {
+  id: string;
+  attendanceStatus: "ATTENDING" | "NOT_ATTENDING";
+  numberOfAttendees: number;
+  createdAt: Date;
+  guest: {
+    id: string;
+    name: string;
+    phone?: string;
+  };
+}
+
+interface Wish {
+  id: string;
+  name: string;
+  message: string;
+  guest?: {
+    id: string;
+    name: string;
+  } | null;
+  attendanceStatus?: "ATTENDING" | "NOT_ATTENDING" | null;
+  createdAt: Date;
+}
+
+interface RawRsvp {
+  id: string;
+  attendanceStatus: "hadir" | "tidak_hadir";
+  numberOfAttendees: number;
+  createdAt: string;
+  guestId: string;
+  guest: {
+    name: string;
+    phone?: string;
+  };
+}
+
+interface RawWish {
+  id: string;
+  name: string;
+  message: string;
+  createdAt: string;
+  guest?: {
+    id: string;
+    name: string;
+  } | null;
+  attendanceStatus?: "hadir" | "tidak_hadir" | null;
+}
+
+interface SummaryData {
+  totalRsvps: number;
+  confirmedAttendance: number;
+  declinedAttendance: number;
+  totalAttendees: number;
+  totalWishes: number;
+}
+
 interface DashboardData {
   guestStats: GuestStats;
   totalRsvps: number;
   confirmedAttendance: number;
+  declinedAttendance: number;
   totalAttendees: number;
   totalWishes: number;
 }
@@ -54,15 +122,17 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [viewTransitionKey, setViewTransitionKey] = useState(0);
   const { toasts, toast, dismiss } = useToast();
+  const prevViewRef = useRef<AdminView>("dashboard");
 
   // Data states
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null,
   );
-  const [guests, setGuests] = useState<any[]>([]);
-  const [rsvps, setRsvps] = useState<any[]>([]);
-  const [wishes, setWishes] = useState<any[]>([]);
+  const [guests, setGuests] = useState<Guest[]>([]);
+  const [rsvps, setRsvps] = useState<Rsvp[]>([]);
+  const [wishes, setWishes] = useState<Wish[]>([]);
   const [actionLogs, setActionLogs] = useState<ActionLogData[]>([]);
   const [actionStats, setActionStats] = useState<ActionStats | null>(null);
 
@@ -107,6 +177,14 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
+  // Page transition animation
+  useEffect(() => {
+    if (prevViewRef.current !== currentView) {
+      setViewTransitionKey((prev) => prev + 1);
+      prevViewRef.current = currentView;
+    }
+  }, [currentView]);
+
   const fetchAllData = async () => {
     setLoading(true);
     try {
@@ -127,8 +205,8 @@ export default function AdminPage() {
       ]);
 
       // Compose dashboard data
-      let summaryData: any = null;
-      let guestStatsData: any = null;
+      let summaryData: SummaryData | null = null;
+      let guestStatsData: GuestStats | null = null;
 
       if (summaryRes.ok) {
         const res = await summaryRes.json();
@@ -144,6 +222,7 @@ export default function AdminPage() {
           guestStats: guestStatsData,
           totalRsvps: summaryData.totalRsvps || 0,
           confirmedAttendance: summaryData.confirmedAttendance || 0,
+          declinedAttendance: summaryData.declinedAttendance || 0,
           totalAttendees: summaryData.totalAttendees || 0,
           totalWishes: summaryData.totalWishes || 0,
         });
@@ -151,15 +230,47 @@ export default function AdminPage() {
 
       if (guestsRes.ok) {
         const data = await guestsRes.json();
-        setGuests(data.guests || data.data || data);
+        const guestList = data.guests || data.data || data;
+        setGuests(guestList);
       }
       if (rsvpsRes.ok) {
         const data = await rsvpsRes.json();
-        setRsvps(data.rsvps || data.data || data);
+        // Map raw RSVPs data to component-expected format
+        const rawRsvps: RawRsvp[] = data.rsvps || data.data || data;
+        const mappedRsvps = rawRsvps.map(
+          (r: RawRsvp): Rsvp => ({
+            id: r.id,
+            attendanceStatus:
+              r.attendanceStatus === "hadir" ? "ATTENDING" : "NOT_ATTENDING",
+            numberOfAttendees: r.numberOfAttendees,
+            createdAt: new Date(r.createdAt),
+            guest: {
+              id: r.guestId,
+              name: r.guest.name,
+              phone: r.guest.phone,
+            },
+          }),
+        );
+        setRsvps(mappedRsvps);
       }
       if (wishesRes.ok) {
         const data = await wishesRes.json();
-        setWishes(data.wishes || data.data || data);
+        // Map raw wishes data to component-expected format
+        const rawWishes: RawWish[] = data.wishes || data.data || data;
+        const mappedWishes: Wish[] = rawWishes.map((w: RawWish) => ({
+          id: w.id,
+          name: w.name,
+          message: w.message,
+          guest: w.guest,
+          attendanceStatus:
+            w.attendanceStatus === "hadir"
+              ? "ATTENDING"
+              : w.attendanceStatus === "tidak_hadir"
+                ? "NOT_ATTENDING"
+                : null,
+          createdAt: new Date(w.createdAt),
+        }));
+        setWishes(mappedWishes);
       }
 
       // Action logs stats
@@ -240,7 +351,7 @@ export default function AdminPage() {
     setActionStats(null);
   };
 
-  const handleCopyLink = (token: string) => {
+  const handleCopyLink = () => {
     toast({
       title: "Link Copied",
       message: "Invitation link copied to clipboard",
@@ -254,27 +365,13 @@ export default function AdminPage() {
       <div className="admin-page min-h-screen flex items-center justify-center p-6">
         <div className="admin-surface rounded-2xl p-8 w-full max-w-md admin-fade-in">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl admin-gradient flex items-center justify-center mx-auto mb-4 admin-glow">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 admin-glow bg-admin-primary">
+              <Lock className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-admin-text mb-2 font-display">
+            <p className="text-2xl font-bold text-admin-text mb-2 font-display">
               Admin Panel
-            </h1>
-            <p className="text-sm text-admin-text-muted">
-              S &amp; Z Wedding Invitation
             </p>
+            <p className="text-sm">S &amp; Z Wedding Invitation</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -286,7 +383,7 @@ export default function AdminPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-11 rounded-xl border border-admin-border bg-admin-surface px-4 text-admin-text text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-admin-text-muted transition-all"
+                className="w-full h-11 rounded-xl border text-admin-text text-sm focus:outline-none focus:ring-2 focus:border-transparent placeholder:text-admin-text-muted transition-all px-4"
                 placeholder="Enter admin password..."
                 required
               />
@@ -294,7 +391,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full h-11 rounded-xl admin-gradient text-white font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full h-11 rounded-xl bg-[var(--color-olive)] text-white font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
               {loginLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -323,9 +420,9 @@ export default function AdminPage() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 min-h-screen flex flex-col">
-        {/* Sticky Header with Backdrop Blur */}
-        <header className="sticky top-0 z-20 backdrop-blur-xl bg-admin-bg/80 border-b border-admin-border px-6 h-16 flex items-center justify-between shrink-0">
+      <main className="flex-1 min-h-screen flex flex-col lg:ml-64">
+        {/* Fixed Header with Backdrop Blur */}
+        <header className="fixed top-0 left-0 right-0 lg:left-64 z-20 backdrop-blur-xl bg-admin-bg/95 border-b border-admin-border px-6 h-16 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -345,14 +442,14 @@ export default function AdminPage() {
         </header>
 
         {/* Main Content */}
-        <div className="flex-1 p-6 overflow-auto admin-scroll">
+        <div className="flex-1 p-6 overflow-auto admin-scroll mt-16">
           <div className="max-w-7xl mx-auto">
             {loading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
               </div>
             ) : (
-              <>
+              <div key={viewTransitionKey} className="admin-page-transition">
                 {currentView === "dashboard" && dashboardData && (
                   <DashboardView data={dashboardData} />
                 )}
@@ -405,7 +502,7 @@ export default function AdminPage() {
                     authToken={getAuthToken()}
                   />
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>

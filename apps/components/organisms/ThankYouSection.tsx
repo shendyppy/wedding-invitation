@@ -52,11 +52,11 @@ export function ThankYouSection() {
           <h2 className="font-serif font-bold tracking-[0.25em] uppercase text-[var(--color-dark-olive)] text-3xl">
             Thank You
           </h2>
-          <p className="font-serif italic text-[var(--color-warm-gray)] text-sm leading-7 max-w-[280px]">
+          <p className="font-serif text-[var(--color-warm-gray)] text-sm leading-7 max-w-[280px]">
             As we begin this new chapter together, we are truly grateful for
             your love, support, and heartfelt wishes.
           </p>
-          <div className="w-48 h-px bg-[var(--color-warm-gray)]/30 mt-2" />
+          <div className="w-full h-px bg-[var(--color-warm-gray)]/30 mt-2" />
         </div>
       </div>
     </section>

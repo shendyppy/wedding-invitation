@@ -1,6 +1,58 @@
 @import "tailwindcss";
 
 /* ============================================================
+   Custom Fonts — Local font files
+   ============================================================ */
+
+@font-face {
+  font-family: 'Constan';
+  src: url('/fonts/constan.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Prestige Signature Script';
+  src: url('/fonts/Prestige%20Signature%20Script%20-%20Demo.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Georgia Local';
+  src: url('/fonts/georgia.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Georgia Local';
+  src: url('/fonts/georgiab.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Sans Local';
+  src: url('/fonts/SourceSansVariable-Roman.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Local';
+  src: url('/fonts/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
    Design Tokens — Wedding Invitation Theme
    ============================================================ */
 
@@ -15,11 +67,11 @@
   --color-black: #1a1a1a;
   --color-cream: #faf8f5;
 
-  /* ── Typography (Google Fonts loaded via next/font) ───── */
-  --font-script: var(--font-great-vibes), cursive;
+  /* ── Typography (Local fonts + Google Fonts) ───── */
+  --font-script: 'Prestige Signature Script', cursive;
   --font-hero: var(--font-love-light), cursive;
-  --font-serif: var(--font-cormorant), "Georgia", serif;
-  --font-sans: var(--font-source-sans), "Inter", sans-serif;
+  --font-serif: 'Constan', serif;
+  --font-sans: 'Source Sans Local', sans-serif;
 
   /* ── Spacing Scale ─────────────────────────────────────── */
   --space-xs: 0.25rem;
@@ -172,10 +224,11 @@
 
 /* ============================================================
    Admin Design Tokens (CSS custom props, no layer needed)
+   Dark theme for admin panel
    ============================================================ */
 
 :root {
-  /* Admin-specific colors (HSL values for Tailwind compatibility) */
+  /* Admin-specific colors - Dark theme for sidebar */
   --admin-bg: 225 25% 6%;
   --admin-surface: 225 22% 10%;
   --admin-surface-hover: 225 20% 14%;
@@ -199,7 +252,7 @@
   --admin-ring: 346 77% 50%;
   --admin-radius: 0.75rem;
 
-  /* Sidebar tokens */
+  /* Sidebar tokens - Dark theme */
   --sidebar-background: 225 25% 8%;
   --sidebar-foreground: 220 15% 75%;
   --sidebar-primary: 346 77% 60%;
@@ -210,8 +263,8 @@
   --sidebar-ring: 346 77% 50%;
 
   /* Admin typography */
-  --admin-font-display: var(--font-playfair-display), "Playfair Display", serif;
-  --admin-font-body: var(--font-dm-sans), "DM Sans", sans-serif;
+  --admin-font-display: var(--font-serif), "Georgia", serif;
+  --admin-font-body: var(--font-sans), "Inter", sans-serif;
 }
 
 /* ============================================================
@@ -225,8 +278,11 @@
     max-width: 480px;
     margin: 0 auto;
     overflow-x: hidden;
+    overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    height: 100vh;
+    -webkit-overflow-scrolling: touch;
   }
 
   .invitation-container::-webkit-scrollbar {
@@ -538,6 +594,10 @@
   .admin-slide-in {
     animation: admin-slide-in 0.3s ease forwards;
   }
+
+  .admin-page-transition {
+    animation: admin-page-transition 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
 }
 
 /* ============================================================
@@ -649,6 +709,17 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes admin-page-transition {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 

@@ -18,7 +18,6 @@ import {
   RsvpWishesSection,
   WeddingGiftSection,
   ThankYouSection,
-  Footer,
 } from "@/components/organisms";
 import { MusicToggle } from "@/components/atoms";
 import { useActionLog } from "@/hooks/useActionLog";
@@ -38,7 +37,7 @@ export function InvitationTemplate({
   guestName,
   guestToken,
   guestId,
-  maxQuota = 2,
+  maxQuota = 4,
   existingRsvp = null,
 }: InvitationTemplateProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -129,7 +128,6 @@ export function InvitationTemplate({
           />
           <WeddingGiftSection guestName={guestName} logAction={logAction} />
           <ThankYouSection />
-          <Footer />
         </div>
       )}
 

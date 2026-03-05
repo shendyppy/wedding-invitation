@@ -150,7 +150,7 @@ export function BulkImportView({
   // Show results after import
   if (importResults) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 admin-fade-in">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-admin-text font-display">
@@ -172,7 +172,7 @@ export function BulkImportView({
           </div>
         </div>
 
-        <div className="admin-surface rounded-2xl overflow-hidden">
+        <div className="admin-fade-in admin-surface rounded-2xl overflow-hidden">
           <div className="overflow-x-auto admin-scroll">
             <table className="w-full">
               <thead>
@@ -259,7 +259,7 @@ export function BulkImportView({
         /* Input Phase */
         <div className="space-y-4">
           {/* Instructions */}
-          <div className="admin-surface rounded-xl p-5">
+          <div className="admin-fade-in admin-surface rounded-xl p-5">
             <div className="flex items-start gap-3">
               <FileSpreadsheet className="w-5 h-5 text-admin-accent mt-0.5" />
               <div className="space-y-2 text-sm text-admin-text-muted">
@@ -287,7 +287,7 @@ export function BulkImportView({
           <textarea
             value={rawText}
             onChange={(e) => setRawText(e.target.value)}
-            className="w-full h-64 rounded-xl border border-admin-border bg-admin-surface px-4 py-3 text-sm text-admin-text font-mono focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder:text-admin-text-muted resize-y transition-all"
+            className="w-full h-64 rounded-xl border border-admin-border bg-admin-surface px-4 py-3 text-sm text-admin-text font-mono focus:outline-none focus:ring-2 focus:ring-admin-accent focus:border-transparent placeholder:text-admin-text-muted resize-y transition-all"
             placeholder={`Cici Lita\t1\nCici Lisan & Ko Chandra\t2\nKo Along & Keluarga\t2\n...`}
           />
 
@@ -337,7 +337,7 @@ export function BulkImportView({
           )}
 
           {/* Preview Table */}
-          <div className="admin-surface rounded-2xl overflow-hidden">
+          <div className="admin-fade-in admin-surface rounded-2xl overflow-hidden">
             <div className="overflow-x-auto admin-scroll max-h-96">
               <table className="w-full">
                 <thead className="sticky top-0 bg-admin-surface">

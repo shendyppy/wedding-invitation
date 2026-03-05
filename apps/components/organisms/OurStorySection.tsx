@@ -38,7 +38,7 @@ export function OurStorySection() {
             return (
               <p
                 key={i}
-                className={`anim-fade-up ${vis} ${delayClass} font-serif italic text-white/90 text-xs! sm:text-sm! leading-7 text-center px-2`}
+                className={`anim-fade-up ${vis} ${delayClass} font-serif text-white/90 text-xs! sm:text-sm! leading-7 text-center px-2`}
               >
                 {paragraph}
               </p>

@@ -30,7 +30,7 @@ export interface Guest {
   rsvpSubmitted: boolean;
   rsvp?: {
     id: string;
-    attendanceStatus: "hadir" | "tidak_hadir";
+    attendanceStatus: "ATTENDING" | "NOT_ATTENDING";
     numberOfAttendees: number;
   } | null;
   createdAt: string;
@@ -78,11 +78,11 @@ export function GuestsView({
     if (!guest.rsvp) {
       return <Badge variant="info">Opened</Badge>;
     }
-    if (guest.rsvp.attendanceStatus === "hadir") {
-      return <Badge variant="success">Confirmed</Badge>;
+    if (guest.rsvp.attendanceStatus === "ATTENDING") {
+      return <Badge variant="success">Attending</Badge>;
     }
-    if (guest.rsvp.attendanceStatus === "tidak_hadir") {
-      return <Badge variant="destructive">Declined</Badge>;
+    if (guest.rsvp.attendanceStatus === "NOT_ATTENDING") {
+      return <Badge variant="destructive">Not Attending</Badge>;
     }
     return <Badge variant="warning">Pending</Badge>;
   };
@@ -158,7 +158,7 @@ export function GuestsView({
       </div>
 
       {/* Table */}
-      <div className="admin-surface rounded-2xl overflow-hidden">
+      <div className="admin-fade-in admin-surface rounded-2xl overflow-hidden">
         <div className="overflow-x-auto admin-scroll">
           <table className="w-full">
             <thead>
@@ -223,7 +223,7 @@ export function GuestsView({
                     </td>
                     <td className="p-4">
                       <span className="text-sm font-medium text-admin-text">
-                        {guest.rsvp?.attendanceStatus === "hadir"
+                        {guest.rsvp?.attendanceStatus === "ATTENDING"
                           ? `${guest.rsvp.numberOfAttendees} / ${guest.maxQuota}`
                           : guest.maxQuota}
                       </span>
@@ -233,20 +233,20 @@ export function GuestsView({
                       {guest.rsvp ? (
                         <div className="space-y-1">
                           <div className="flex items-center gap-1 text-sm">
-                            {guest.rsvp.attendanceStatus === "hadir" ? (
+                            {guest.rsvp.attendanceStatus === "ATTENDING" ? (
                               <Check className="w-3 h-3 text-emerald-500" />
                             ) : (
-                              <X className="w-3 h-3 text-red-500" />
+                              <X className="w-3 h-3 text-admin-text-muted" />
                             )}
                             <span className="text-admin-text">
-                              {guest.rsvp.attendanceStatus === "hadir"
-                                ? "Hadir"
-                                : "Tidak Hadir"}
+                              {guest.rsvp.attendanceStatus === "ATTENDING"
+                                ? "Attending"
+                                : "Not Attending"}
                             </span>
                           </div>
-                          {guest.rsvp.attendanceStatus === "hadir" && (
+                          {guest.rsvp.attendanceStatus === "ATTENDING" && (
                             <p className="text-xs text-admin-text-muted">
-                              {guest.rsvp.numberOfAttendees} attendee
+                              {guest.rsvp.numberOfAttendees} guest
                               {guest.rsvp.numberOfAttendees > 1 ? "s" : ""}
                             </p>
                           )}
@@ -289,8 +289,9 @@ export function GuestsView({
         {filteredGuests.length > PAGE_SIZE && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-admin-border">
             <p className="text-xs text-admin-text-muted">
-              {startIdx + 1}–{Math.min(startIdx + PAGE_SIZE, filteredGuests.length)}{" "}
-              of {filteredGuests.length}
+              Showing {startIdx + 1}–
+              {Math.min(startIdx + PAGE_SIZE, filteredGuests.length)} of{" "}
+              {filteredGuests.length} guests
             </p>
 
             <div className="flex items-center gap-1">
@@ -318,7 +319,7 @@ export function GuestsView({
                     onClick={() => setCurrentPage(page)}
                     className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
                       page === safePage
-                        ? "admin-gradient text-white"
+                        ? "bg-admin-primary text-white"
                         : "text-admin-text-muted hover:text-admin-text hover:bg-admin-surface-hover"
                     }`}
                   >

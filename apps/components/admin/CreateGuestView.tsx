@@ -1,18 +1,29 @@
 // ============================================================
 // Create Guest View Component
-// Form to add a single guest with dark theme styling
+// Form to add a single guest with styled components
 // ============================================================
 
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { ArrowLeft, UserPlus, Loader2 } from "lucide-react";
+import { ArrowLeft, UserPlus, Loader2, Copy } from "lucide-react";
 import { Input } from "./ui";
 import { Button } from "./ui";
+import { Select } from "@/components/atoms";
+
+interface Guest {
+  id: string;
+  name: string;
+  phone: string | null;
+  maxQuota: number;
+  uniqueToken: string;
+  isOpened: boolean;
+  createdAt: string;
+}
 
 interface CreateGuestViewProps {
   onBack: () => void;
-  onGuestCreated: (guest: any) => void;
+  onGuestCreated: (guest: Guest) => void;
   authToken: string;
 }
 
@@ -23,10 +34,10 @@ export function CreateGuestView({
 }: CreateGuestViewProps) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [maxQuota, setMaxQuota] = useState(2);
+  const [maxQuota, setMaxQuota] = useState(4);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState<any>(null);
+  const [success, setSuccess] = useState<Guest | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -60,7 +71,7 @@ export function CreateGuestView({
       // Reset form
       setName("");
       setPhone("");
-      setMaxQuota(2);
+      setMaxQuota(4);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create guest");
     } finally {
@@ -98,7 +109,7 @@ export function CreateGuestView({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Form */}
-        <div className="admin-surface rounded-2xl p-6">
+        <div className="admin-fade-in admin-surface rounded-2xl p-6">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-admin-text mb-2">
@@ -131,18 +142,19 @@ export function CreateGuestView({
               <label className="block text-sm font-medium text-admin-text mb-2">
                 Max Quota <span className="text-red-400">*</span>
               </label>
-              <select
-                value={maxQuota}
+              <Select
+                placeholder="Select quota..."
+                options={[
+                  { value: "1", label: "1 person" },
+                  { value: "2", label: "2 people" },
+                  { value: "3", label: "3 people" },
+                  { value: "4", label: "4 people" },
+                ]}
+                value={String(maxQuota)}
                 onChange={(e) => setMaxQuota(parseInt(e.target.value))}
                 disabled={loading}
-                className="w-full h-11 rounded-xl border border-admin-border bg-admin-surface px-4 text-admin-text text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              >
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n}>
-                    {n} {n === 1 ? "person" : "people"}
-                  </option>
-                ))}
-              </select>
+                required
+              />
               <p className="text-xs text-admin-text-muted mt-1">
                 Maximum number of attendees this guest can bring
               </p>
@@ -176,7 +188,7 @@ export function CreateGuestView({
 
         {/* Success Result */}
         {success && (
-          <div className="admin-surface rounded-2xl p-6 admin-fade-in">
+          <div className="admin-fade-in admin-surface rounded-2xl p-6">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
                 <UserPlus className="w-4 h-4 text-emerald-500" />
@@ -211,7 +223,7 @@ export function CreateGuestView({
                   Invitation Link
                 </p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs text-primary bg-admin-surface-hover px-3 py-2 rounded-lg break-all">
+                  <code className="flex-1 text-xs text-admin-primary bg-admin-surface-hover px-3 py-2 rounded-lg break-all">
                     {invitationUrl}
                   </code>
                   <Button
@@ -220,19 +232,7 @@ export function CreateGuestView({
                     onClick={handleCopyLink}
                     className="h-8 w-8 shrink-0"
                   >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
+                    <Copy className="w-4 h-4" />
                   </Button>
                 </div>
               </div>

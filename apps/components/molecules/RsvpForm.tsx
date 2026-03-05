@@ -42,7 +42,7 @@ export function RsvpForm({
   guestToken,
   guestId,
   guestName,
-  maxQuota = 2,
+  maxQuota = 4,
   existingRsvp = null,
   onSubmit,
   onSuccess,
@@ -50,8 +50,8 @@ export function RsvpForm({
   className = "",
 }: RsvpFormProps) {
   const [formData, setFormData] = useState<RsvpFormData>({
-    name: "",
-    guestCount: "",
+    name: guestName || "",
+    guestCount: maxQuota === 1 ? "1" : "",
     attendance: "",
     message: "",
   });
@@ -73,6 +73,11 @@ export function RsvpForm({
   const guestCountOptions = GUEST_COUNT_OPTIONS.filter(
     (option) => parseInt(option.value) <= maxQuota
   );
+
+  // Check if guest count should be disabled (when maxQuota is 1)
+  const isGuestCountDisabled = maxQuota === 1;
+  // Check if name should be read-only (when guestName is provided)
+  const isNameReadOnly = !!guestName;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -156,7 +161,8 @@ export function RsvpForm({
           setFormData((prev) => ({ ...prev, name: e.target.value }))
         }
         required
-        disabled={isDisabled}
+        disabled={isDisabled || isNameReadOnly}
+        readOnly={isNameReadOnly}
       />
 
       <Select
@@ -168,7 +174,8 @@ export function RsvpForm({
           setFormData((prev) => ({ ...prev, guestCount: e.target.value }))
         }
         required
-        disabled={isDisabled}
+        disabled={isDisabled || isGuestCountDisabled}
+        buttonClassName={isGuestCountDisabled ? "bg-[var(--color-soft-beige)]/50!" : ""}
       />
 
       <Select
