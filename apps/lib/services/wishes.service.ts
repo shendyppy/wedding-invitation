@@ -47,13 +47,12 @@ export async function submitWish(
 }
 
 /**
- * Get all wishes (public - limited)
+ * Get all wishes (public)
  */
 export async function getWishes(): Promise<ApiResponse<Wish[]>> {
   try {
     const wishes = await prisma.wish.findMany({
       orderBy: { createdAt: "desc" },
-      take: 50,
     });
 
     return { success: true, data: wishes };
